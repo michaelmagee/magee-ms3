@@ -1,3 +1,9 @@
+Pre-initial checkin notes: 
+
+Heroku - github integration :  https://devcenter.heroku.com/articles/github-integration
+
+
+
 <img src="https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png" style="margin: 0;">
 
 Welcome USER_NAME,
