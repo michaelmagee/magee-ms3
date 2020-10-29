@@ -38,7 +38,6 @@ The fundamental use case for this first version is:
 
 *** 
 Hosted app
-** MJM confirm URL
 The App is published at https://magee-ms3.herokuapp.com
 ***
 Wireframes for usability on different devices

@@ -8,7 +8,7 @@ import bcrypt
 
 
 environment = os.getenv("MS3_ENVIRONMENT")
-print("environment detected: ", environment)
+print("Runtime environment detected: ", environment)
 app = Flask(__name__)                       # *** Flask app
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
