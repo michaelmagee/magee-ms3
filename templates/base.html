@@ -18,22 +18,38 @@
 <body>
 
     <header>
+        <!-- navbar dropdown -->
+        <!-- Projects Dropdown Structure -->
+        <ul id="projects_dropdown" class="dropdown-content">
+            <li><a href="{{ url_for('project_add') }}">New Project</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('projects_search') }}">Search</a></li>
+        </ul>
+        <!-- System Dropdown Structure -->
+        <ul id="system_dropdown" class="dropdown-content">
+            <li><a href="{{ url_for('get_users') }}">Users</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('get_categories') }}">Categories</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('get_preferences') }}">Settings</a></li>
+        </ul>
         <!-- top navbar -->
         <nav class="nav-extended text-shadow light-blue darken-1">
             <div class="nav-wrapper">
                 <a href="#" class="brand-logo">Honey Do?</a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="fas fa-bars"></i></a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="#">Home</a></li>
+                    <li><a href="{{ url_for('get_projects') }}">Home</a></li>
                     {% if session.user %}
-                        <li><a href="#">New Project</a></li>
-                        <li><a href="#">Project Search</a></li>
-                        <li><a href="#">Users</a></li>
-                        <li><a href="#">Categories</a></li>
-                        <li><a href="#">Log Out</a></li>
+                    <!-- Dropdown Trigger -->
+                    <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
+                                class="sidenav-trigger right fas fa-bars"></i></a></li>
+                    <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
+                                class="sidenav-trigger right fas fa-bars"></i></a></li>
+                    <li><a href="{{ url_for('logout') }}">Log Out</a></li>
                     {% else %}
-                        <li><a href="#">Log In</a></li>
-                        <li><a href="#">Register</a></li>
+                    <li><a href="{{ url_for('login') }}">Log In</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -51,10 +67,10 @@
             <li><a href="#">Users</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="#">Log Out</a></li>
-        {% else %}
+            {% else %}
             <li><a href="#">Log In</a></li>
             <li><a href="#">Register</a></li>
-        {% endif %}
+            {% endif %}
         </ul>
     </header>
 
@@ -74,8 +90,8 @@
 
 
     <main class="container">
-    {% block content %}
-    {% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"
