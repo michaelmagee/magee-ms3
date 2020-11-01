@@ -139,7 +139,7 @@ This sample site is set up to use Heroku as a deployment target.
     - MS3_MONGO_URI
     - IP 
     - PORT 
-    -etc.. 
+    - SECRET_KEY 
 
 This sample site can easily edited and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
 - From a terminal in the appropriate location clone a copy of the code locally: 
@@ -166,6 +166,7 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 - Attempted color inspiration from color.adobe.com
 - Table of contents generated with markdown-toc: http://ecotrust-canada.github.io/markdown-toc/  
 - Cool Excel to markdown utility by DaveJ: https://thisdavej.com/copy-table-in-excel-and-paste-as-a-markdown-table/
+- Secret Key generation from: https://randomkeygen.com/  as suggested by CI
 
 
 ### Environment 

@@ -14,6 +14,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 app.config["MONGO_URI"] = os.getenv("MS3_MONGO_URI")
 app.config["MONGO_DBNAME"] = os.getenv("MS3_MONGO_DBN")
+app.secret_key = os.getenv("MS3_SECRET_KEY")
 
 
 # *** wires PyMongo to the APP and saves mongo
@@ -22,8 +23,8 @@ mongo = PyMongo(app)
 """                 ===      Describe route functions   ===    """
 @app.route("/")
 def initial_test():
-    testlist = list(mongo.db.testCollection.find())
-    return render_template("test.html", testdata=testlist)
+    flash("Flash Works!")
+    return render_template("projects.html")
 
 
 """
