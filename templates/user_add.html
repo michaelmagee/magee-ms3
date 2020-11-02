@@ -1,7 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>Home screen - show projects </h3>
+<h3 class="light-blue-text text-darken-4 center-align">Add User</h3>
 
+<div class="row card-panel grey lighten-5">
+    <form class="col s12" method="POST" action="{{ url_for('user_add') }}">
+        <!-- category name -->
+        <div class="row">
+            <div class="input-field col s12">
+                <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
+                <input id="user_name" name="user_name" minlength="3" maxlength="25" type="text" class="validate"
+                    required>
+                <label for="user_name">User Name</label>
+            </div>
+        </div>
+        <!-- submit button -->
+        <div class="row">
+            <div class="col s12 center-align">
+                <button type="submit" class="btn-large light-blue darken-1 text-shadow">
+                    Add User <i class="fas fa-plus-square right"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

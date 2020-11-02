@@ -1,7 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>Users</h3>
+
+<h3 class="light-blue-text text-darken-4 center-align">Manage Users</h3>
+<p>   MIKE Describe and style information about what a user is used for here</p>
+
+<div class="row">
+    <div class="col s12 center-align">
+        <a href="{{ url_for('user_add') }}" class="btn-large light-blue darken-2 text-shadow">
+            Add User <i class="fas fa-plus-square right"></i>
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for user in users %}
+        <div class="col s12 m3">
+            <div class="card light-blue darken-4 text-shadow center-align">
+                <div class="card-content white-text">
+                    <span class="card-title">{{ user.username }}</span>
+                </div>
+                <div class="card-action">
+                    <a href="{{ url_for('user_edit', user_id=user._id) }}" class="btn green accent-4">Edit</a>
+                    <a href="{{ url_for('user_delete', user_id=user._id) }}" class="btn light-blue lighten-1">Delete</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
 
 
 {% endblock %}

@@ -40,17 +40,17 @@
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="fas fa-bars"></i></a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="{{ url_for('get_projects') }}">Home</a></li>
-                    {% if session.user %}
-                    <!-- Dropdown Trigger -->
+                    <!-- { % if session.user % }
+                    Dropdown Trigger -->
                     <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
                                 class="sidenav-trigger right fas fa-bars"></i></a></li>
                     <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
                                 class="sidenav-trigger right fas fa-bars"></i></a></li>
                     <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-                    {% else %}
+                    <!-- { % else % } -->
                     <li><a href="{{ url_for('login') }}">Log In</a></li>
                     <li><a href="{{ url_for('register') }}">Register</a></li>
-                    {% endif %}
+                    <!--  { % endif % }  -->
                 </ul>
             </div>
         </nav>

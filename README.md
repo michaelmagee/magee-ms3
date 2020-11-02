@@ -101,7 +101,8 @@ In this section, you should mention all of the languages, frameworks, libraries,
     - https://materializecss.com/
 - Font Awesome - Fonts and Icons 
     - https://fontawesome.com/
-
+- BCRYPT - password hashing 
+    - https://pypi.org/project/bcrypt/
 ******
 ## Testing 
 
@@ -167,6 +168,8 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 - Table of contents generated with markdown-toc: http://ecotrust-canada.github.io/markdown-toc/  
 - Cool Excel to markdown utility by DaveJ: https://thisdavej.com/copy-table-in-excel-and-paste-as-a-markdown-table/
 - Secret Key generation from: https://randomkeygen.com/  as suggested by CI
+- Using BCRYPT for hashing by Brian my mentor. 
+- Excellent examples provided by Code Institute for the Task Manager.
 
 
 ### Environment 
@@ -185,5 +188,5 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 ### Acknowledgements
 
 - I received inspiration for this project from examples from Code Institute that I played with as I was learning.  
-- Memory Game and animation tutorials from Adam Khoury
-- Javascript class usage tutorials NetNinjas
+-  
+-  
