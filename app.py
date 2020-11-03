@@ -93,9 +93,10 @@ def register():
             flash("Account name already exists")
             return redirect(url_for("register"))
         #  password field for match validation done in the html
+        register_password = bcrypt.hashpw(bytes(request.form.get("password"), "utf-8"), bcrypt.gensalt())
         register_data = {    # dictionary for insert
             "account_name": request.form.get("account_name").lower(),
-            "password": bcrypt.hashpw(bytes(request.form.get("password"), "utf-8"), bcrypt.gensalt()),
+            "password": register_password,
             "user_type": "account",
             "account_status": "active",         # possibly locked in future?
             "date_created": date.today().strftime("%d %B, %Y")
@@ -104,27 +105,56 @@ def register():
         # add the new account
         mongo.db.users.insert_one(register_data)
 
-        # put the new user into "session" cookie
-        session["account"] = request.form.get("account_name").lower()
+        # put the new user into flask "session"
+        session["ACCOUNT"] = request.form.get("account_name").lower()
         flash("Registration Successful")
-        return redirect(url_for("get_users", account_name=session["account"]))
+        return redirect(url_for("get_users", account_name=session.get("ACCOUNT")))
     return render_template("register.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+        if request.method == "POST":
+        # Check if account already exists in DB
+            existing_user = mongo.db.users.find_one(
+                {"account_name": request.form.get("account_name").lower(),"user_type": "account"})
+
+            if existing_user:
+                #Check the password.  First, get it into a binary form
+                supplied_password = bytes(request.form.get("password"), "utf-8")
+
+                bad_hash = bcrypt.hashpw(bytes("yadayada", "utf-8"), bcrypt.gensalt())
+                good_hash = bcrypt.hashpw(bytes(request.form.get("password"), "utf-8"), bcrypt.gensalt())
+                stashed = existing_user["password"]
+                stashed2 = existing_user["password"].encode("utf-8")
+                """
+                hashed = bcrypt.hashpw(supplied_password, bcrypt.gensalt() )
+                hashed2 = bcrypt.hashpw(supplied_password, bcrypt.gensalt() )
+                passed1 = bcrypt.checkpw(supplied_password, hashed)
+                passed2 = bcrypt.checkpw(supplied_password, hashed2)
+                """ 
+
+                # now compare that against the one in the DB
+                if bcrypt.checkpw(supplied_password, existing_user["password"]):
+                    # Creds are good, so set account in session and send it to select a user
+                    session["ACCOUNT"] = request.form.get("account_name").lower()
+                    flash("Account login Successful")
+                    return redirect(url_for("get_users"))
+
+        # Appears that creds are no good, ask them to retry. 
+        flash("User name and / or password incorrect.  Please retry. ")
+        return render_template("login.html")
 
 
 @app.route("/logout")
 def logout():
     # remove user from Flask session (NOT the cookie)
 
-    if session.get("account") is None:
+    if session.get("ACCOUNT") is None:
         flash("You were already logged out")
 
     else: 
-        session.pop("account")
+        session.pop("ACCOUNT")
         flash("You are logged out")
 
     return redirect(url_for("login"))
@@ -139,7 +169,7 @@ def get_users():
         flash("You must login first")
         return redirect(url_for("login"))
 
-    users = list(mongo.db.users.find({"user_type": "user"}, {"username": session["account"]}).sort("username", 1))
+    users = list(mongo.db.users.find({"user_type": "user", "username": session.get("ACCOUNT")}).sort("username", 1))
     if len(users) == 0:
         flash("Please add a user to get started")
     return render_template("users.html", users=users)
@@ -155,17 +185,21 @@ def user_edit():
 @app.route("/user_add", methods=["GET", "POST"])
 def user_add():
     if request.method == "POST":
-        # Check if account already exists in DB
+        # See if this is the first user added and make it active in session 
+        users_exist = len(list(mongo.db.users.find({"user_type": "user", "username": session.get("ACCOUNT")}) ) )
+
+        # Check if account/user already exists 
         existing_user = mongo.db.users.find_one(
-            {"user_name": request.form.get("user_name").lower()}, 
-            {"user_type": "user"})
+            {"user_name": request.form.get("user_name").lower(),
+            "account_name": session.get("ACCOUNT"),
+            "user_type": "user"})
 
         if existing_user:
             flash("User name already exists.  Please try a new one")
             return redirect(url_for("get_users"))
 
         user_data = {    # dictionary for insert
-            "account_name": session["account"],
+            "account_name": session.get("ACCOUNT"),
             "password": "",
             "user_type": "user",
             "user_name": request.form.get("user_name"),
@@ -176,7 +210,11 @@ def user_add():
 
         mongo.db.users.insert_one(user_data)
         flash("New user Added")
-        return redirect(url_for("get_users"), account_name=session["account"])
+
+        # if the initial user count was 0, this user can be set as the active user in session
+        if users_exist == 0:
+            session["ACTIVE_USER"] = request.form.get("user_name").lower()
+        return redirect(url_for("get_users"))
 
     return render_template("user_add.html")
 
