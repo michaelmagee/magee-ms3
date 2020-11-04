@@ -36,7 +36,7 @@
         <!-- top navbar -->
         <nav class="nav-extended text-shadow light-blue darken-1">
             <div class="nav-wrapper">
-                <a href="#" class="brand-logo">  Honey Do? {% if session.account %}   -  Welcome {{ session.ACCOUNT }} / {{ session.ACTIVE_USER }}  {% endif %} </a>
+                <a href="#" class="brand-logo">  Honey Do? {% if session.ACCOUNT %}   -  Welcome {{ session.ACCOUNT }} / {{ session.ACTIVE_USER }}  {% endif %} </a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="fas fa-bars"></i></a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="{{ url_for('get_projects') }}">Home</a></li>
