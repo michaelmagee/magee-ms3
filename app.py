@@ -28,7 +28,15 @@ mongo = PyMongo(app)
 @app.route("/")
 @app.route("/get_projects")
 def get_projects():
-    flash("Home Flash Works!")
+    if session.get("ACCOUNT") is None:
+        flash("You must login first")
+        return redirect(url_for("login"))
+
+    if session.get("ACTIVE_USER") is None:
+        flash("You must select your user name")
+        return redirect(url_for("user_select"))
+
+
     return render_template("projects.html")
 
 
@@ -73,7 +81,7 @@ def category_edit():
 
 """                 ===      PREFERENCE related code  (TBD)===    """
 
-
+#MIKE REMOVE IF NOT USED 
 @app.route("/get_preferences")
 def get_preferences():
     flash("get_preferences Flash Works!")
@@ -166,15 +174,18 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # remove user from Flask session (NOT the cookie)
+    # remove user & account from Flask session (NOT the cookie)
 
     if session.get("ACCOUNT") is None:
         flash("You were already logged out")
-
     else:
         session.pop("ACCOUNT")
-        flash("You are logged out")
 
+    if session.get("ACTIVE_USER") is not None:
+        session.pop("ACTIVE_USER")
+
+    flash("You are logged out")
+    
     return redirect(url_for("login"))
 
 
@@ -188,6 +199,10 @@ def get_users():
         flash("You must login first")
         return redirect(url_for("login"))
 
+    if session.get("ACTIVE_USER") is None:
+        flash("You must select a user name")
+        return redirect(url_for("user_select"))
+
     users = list(mongo.db.users.find(
         {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
     if len(users) == 0:
@@ -200,6 +215,27 @@ def get_users():
 def user_edit():
     flash("user_edit Flash Works!")
     return render_template("user_edit.html")
+
+@app.route("/user_select")
+def user_select():
+    users = list(mongo.db.users.find(
+        {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
+    if len(users) == 0:
+        flash("Please add a user to get started")
+        return render_template("user_add.html")
+    return render_template("user_select.html", users=users)
+
+@app.route("/user_set/<user_name>")
+def user_set(user_name):
+    if session.get("ACTIVE_USER") is not None:
+        session.pop("ACTIVE_USER")
+    session["ACTIVE_USER"] = user_name
+    flash_message =("User: ", user_name,  "is now active.")
+    flash(flash_message)
+    
+    return redirect(url_for("get_projects"))
+
+
 
 # MIKE Add some defensive programing here specially existing session data
 
@@ -226,6 +262,7 @@ def user_add():
             "password": "",
             "user_type": "user",
             "user_name": request.form.get("user_name"),
+            "user_notes": request.form.get("user_notes"),
             "account_status": "active",         # possibly locked in future?
             "date_created": date.today().strftime("%d %B, %Y"),
             "user_points:": 0

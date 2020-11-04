@@ -10,6 +10,10 @@ jQuery for MaterializeCSS initialization
 
 $(document).ready(function () {
     $(".dropdown-trigger").dropdown();  /* Navbar Dropdown Menu */
+    $(".sidenav").sidenav({ edge: "right" });
+    $('.collapsible').collapsible();
+    $('.tooltipped').tooltip();
+    $('select').formSelect();
     });
 
     /* 
