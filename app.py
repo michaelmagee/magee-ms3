@@ -265,7 +265,7 @@ def user_add():
             "user_notes": request.form.get("user_notes"),
             "account_status": "active",         # possibly locked in future?
             "date_created": date.today().strftime("%d %B, %Y"),
-            "user_points:": 0
+            "user_points": 0
         }
 
         mongo.db.users.insert_one(user_data)

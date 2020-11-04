@@ -22,7 +22,8 @@
             <div class="card light-blue darken-4 text-shadow center-align">
                 <div class="card-content white-text">
                     <span class="card-title">{{ user.user_name }}</span>
-                    <span class="card-title">{{ user.user_notes }}</span>
+                    <span class="card-title">Points: {{ user.user_points }}</span>
+                    <p>{{ user.user_notes }}</p>
                 </div>
                 <div class="card-action">
                     <a href="{{ url_for('user_edit', user_id=user._id) }}" class="btn green accent-4">Edit</a>
