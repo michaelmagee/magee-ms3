@@ -6,9 +6,6 @@ from flask_pymongo import PyMongo
 from bson.objectid import ObjectId  # converts object ids
 import bcrypt
 
-# MIKE REMOVE AFTER Mentor Discussiontest werkzeug vs bcrypt
-#from werkzeug.security import generate_password_hash, check_password_hash
-
 environment = os.getenv("MS3_ENVIRONMENT")
 print("Runtime environment detected: ", environment)
 app = Flask(__name__)                       # *** Flask app
@@ -136,17 +133,6 @@ def register():
             flash("Account name unavailable.")
             return redirect(url_for("register"))
 
-        """ MIKE, REMOVE after discussion with Mentor           
-                #  password field for match validation done in the html
-                bcrypt_hashed_password = bcrypt.hashpw(bytes(request.form.get("password"), "utf-8"), bcrypt.gensalt())
-                werkzeug_hashed_password = generate_password_hash(request.form.get("password"))
-
-                #  Just confirm the hased values are correct
-                if check_password_hash(werkzeug_hashed_password, request.form.get("password")):
-                    print("werkzeug_hashed_password is OK")
-                if bcrypt.checkpw(bytes(request.form.get("password"), "utf-8"), bcrypt_hashed_password):
-                    print("bcrypt_hashed_password is OK")
-        """
         bcrypt_hashed_password = bcrypt.hashpw(bytes(request.form.get("password"), 
             "utf-8"), bcrypt.gensalt())
 
@@ -177,20 +163,6 @@ def login():
         existing_user = mongo.db.users.find_one(
             {"account_name": request.form.get("account_name").lower(), "user_type": "account"})
 
-        """ MIKE, REMOVE after discussion with Mentor
-                            # Now, check the passwords from the database 
-                            if check_password_hash(existing_user["werkzeug_hashed_password"], request.form.get("password")):
-                                print("werkzeug_hashed_password is OK")
-                            else: 
-                                print("bcrypt_hashed_password FAILED")
-
-                            if bcrypt.checkpw(bytes(request.form.get("password"), "utf-8"), existing_user["bcrypt_hashed_password"]):
-                                print("bcrypt_hashed_password is OK")
-                            else: 
-                                print("bcrypt_hashed_password FAILED")
-
-                            return redirect(url_for("login"))
-            """
         if existing_user:
             # now compare that against the one in the DB
             if bcrypt.checkpw(bytes(request.form.get("password"), "utf-8"), existing_user["account_password"]):
