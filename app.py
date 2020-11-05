@@ -26,7 +26,6 @@ mongo = PyMongo(app)
 
 
 @app.route("/")
-@app.route("/get_projects")
 def get_projects():
     if session.get("ACCOUNT") is None:
         flash("You must login first")
@@ -60,12 +59,29 @@ def projects_search():
 
 @app.route("/get_categories")
 def get_categories():
-    return render_template("categories.html")
+    categories = list(mongo.db.categories.find(
+        {"account_name": session.get("ACCOUNT")}) )
+
+    if len(categories) == 0:
+        flash("Please add a category to get started")
+        return render_template("category_add.html")
+
+    # here is where will embed the category counts
+    """
+        for cat in categories:
+            Get the count of projects in major states for each one
+            cat["number_new"] = result
+    """  
 
 
-@app.route("/category_add")
+
+    return render_template("categories.html", categories=categories)
+        
+
+
+@app.route("/category_add", methods=["GET", "POST"])
 def category_add():
-     if request.method == "POST":
+    if request.method == "POST":
        
         # Check if category already exists
         existing_cat = mongo.db.users.find_one(
@@ -85,11 +101,12 @@ def category_add():
             "created_by": session.get("ACTIVE_USER")
         }
 
-        mongo.db.users.insert_one(category_data)
+        mongo.db.categories.insert_one(category_data)
         flash("Category Added")
+        return redirect(url_for("get_categories"))
 
-        return render_template("get_categories.html")
-
+    # NOT a post so send along to category_add
+    return render_template("category_add.html")
 
 @app.route("/category_edit")
 def category_edit():
