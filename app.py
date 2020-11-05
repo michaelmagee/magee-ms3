@@ -42,19 +42,16 @@ def get_projects():
 
 @app.route("/project_add")
 def project_add():
-    flash("project_add Flash Works!")
     return render_template("project_add.html")
 
 
 @app.route("/project_edit")
 def project_edit():
-    flash("projects_edit Flash Works!")
     return render_template("projects_edit.html")
 
 
 @app.route("/projects_search")
 def projects_search():
-    flash("projects_search Flash Works!")
     return render_template("projects_search.html")
 
 
@@ -63,19 +60,39 @@ def projects_search():
 
 @app.route("/get_categories")
 def get_categories():
-    flash("get_categories Flash Works!")
     return render_template("categories.html")
 
 
 @app.route("/category_add")
 def category_add():
-    flash("category_add Flash Works!")
-    return render_template("category_add.html")
+     if request.method == "POST":
+       
+        # Check if category already exists
+        existing_cat = mongo.db.users.find_one(
+            {"category_name": request.form.get("category_name").lower(),
+             "account_name": session.get("ACCOUNT")
+             })
+
+        if existing_cat:
+            flash("Category name already exists.  Please try a new one")
+            return redirect(url_for("category_add"))
+
+        category_data = {    # dictionary for insert
+            "account_name": session.get("ACCOUNT"),
+            "category_name": request.form.get("category_notes"),
+            "category_notes": request.form.get("user_notes"),
+            "date_created": date.today().strftime("%d %B, %Y"),
+            "created_by": session.get("ACTIVE_USER")
+        }
+
+        mongo.db.users.insert_one(category_data)
+        flash("Category Added")
+
+        return render_template("get_categories.html")
 
 
 @app.route("/category_edit")
 def category_edit():
-    flash("category_edit Flash Works!")
     return render_template("category_edit.html")
 
 
@@ -84,7 +101,6 @@ def category_edit():
 #MIKE REMOVE IF NOT USED 
 @app.route("/get_preferences")
 def get_preferences():
-    flash("get_preferences Flash Works!")
     return render_template("preferences_tbd.html")
 
 
@@ -213,7 +229,6 @@ def get_users():
 
 @app.route("/user_edit")
 def user_edit():
-    flash("user_edit Flash Works!")
     return render_template("user_edit.html")
 
 @app.route("/user_select")
@@ -265,6 +280,7 @@ def user_add():
             "user_notes": request.form.get("user_notes"),
             "account_status": "active",         # possibly locked in future?
             "date_created": date.today().strftime("%d %B, %Y"),
+            "created_by": session.get("ACTIVE_USER"),
             "user_points": 0
         }
 

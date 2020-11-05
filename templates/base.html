@@ -36,21 +36,21 @@
         <!-- top navbar -->
         <nav class="nav-extended text-shadow light-blue darken-1">
             <div class="nav-wrapper">
-                <a href="#" class="brand-logo">  Honey Do? {% if session.ACCOUNT %}   -  Welcome {{ session.ACCOUNT }} / {{ session.ACTIVE_USER }}  {% endif %} </a>
+                <a href="#" class="brand-logo">  Honey Do? {% if session.ACCOUNT %}/{{ session.ACCOUNT }}  {% endif %} {% if session.ACTIVE_USER %}  / {{ session.ACTIVE_USER }}  {% endif %} </a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="fas fa-bars"></i></a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="{{ url_for('get_projects') }}">Home</a></li>
-                    <!-- { % if session.user % }
-                    Dropdown Trigger -->
+                    
+                {% if session.ACTIVE_USER %}
+                <li><a href="{{ url_for('get_projects') }}">Home</a></li>
                     <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
                                 class="sidenav-trigger right fas fa-bars"></i></a></li>
                     <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
                                 class="sidenav-trigger right fas fa-bars"></i></a></li>
                     <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-                    <!-- { % else % } -->
+                    {% else %} 
                     <li><a href="{{ url_for('login') }}">Log In</a></li>
                     <li><a href="{{ url_for('register') }}">Register</a></li>
-                    <!--  { % endif % }  -->
+                    {% endif %}
                 </ul>
             </div>
         </nav>
@@ -60,17 +60,18 @@
             <li>
                 <h4 class="center-align light-blue-text text-darken 4">Task Manager</h4>
             </li>
-            <li><a href="#">Home</a></li>
-            {% if session.user %}
-            <li><a href="#">New Project</a></li>
-            <li><a href="#">Project Search</a></li>
-            <li><a href="#">Users</a></li>
-            <li><a href="#">Categories</a></li>
-            <li><a href="#">Log Out</a></li>
-            {% else %}
-            <li><a href="#">Log In</a></li>
-            <li><a href="#">Register</a></li>
-            {% endif %}
+
+            {% if session.ACTIVE_USER %}
+            <li><a href="{{ url_for('get_projects') }}">Home</a></li>
+                <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
+                            class="sidenav-trigger right fas fa-bars"></i></a></li>
+                <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
+                            class="sidenav-trigger right fas fa-bars"></i></a></li>
+                <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+                {% else %} 
+                <li><a href="{{ url_for('login') }}">Log In</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+                {% endif %}
         </ul>
     </header>
 
