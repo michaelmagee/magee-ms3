@@ -16,12 +16,13 @@
         <div class="col s12 m3">
             <div class="card light-blue darken-4 text-shadow center-align">
                 <div class="card-content white-text">
-                    <span class="card-title">{{ category.category_name}}</span>
+                    <span class="card-title">{{ category.category_name }}</span>
+                    <p> {{ category.category_notes }} </p>
                     <p>Created by: {{ category.created_by }} on: {{ category.date_created }} </p>
                 </div>
                 <div class="card-action">
-                    <a href="#" class="btn green accent-4">Edit</a>
-                    <a href="#" class="btn light-blue lighten-1">Delete</a>
+                    <a href="{{ url_for('category_edit', category_id=category._id) }}" class="btn green accent-4">Edit</a>
+                    <a href="{{ url_for('category_delete', category_id=category._id) }}" class="btn light-blue lighten-1">Delete</a>
                 </div>
             </div>
         </div>

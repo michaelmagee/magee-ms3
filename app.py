@@ -15,9 +15,16 @@ app.config["MONGO_URI"] = os.getenv("MS3_MONGO_URI")
 app.config["MONGO_DBNAME"] = os.getenv("MS3_MONGO_DBN")
 app.secret_key = os.getenv("MS3_SECRET_KEY")
 
-
 # *** wires PyMongo to the APP and saves mongo
 mongo = PyMongo(app)
+
+"""
+TO DO:
+    - ALL try/except send the user back to home and do not handle specific exception types.
+        Revisit return flow and see if there's a better way to inetrcept potential
+        database errors abd get failure info
+
+"""
 
 """                 ===      PROJECT (Home) related code  ===    """
 
@@ -31,7 +38,6 @@ def get_projects():
     if session.get("ACTIVE_USER") is None:
         flash("You must select your user name")
         return redirect(url_for("user_select"))
-
 
     return render_template("projects.html")
 
@@ -51,13 +57,21 @@ def projects_search():
     return render_template("projects_search.html")
 
 
-"""                 ===      CATEGORY related code  ===    """
+"""                 ===      CATEGORY related code  ===
+NOTE:   Concern here is that deleting a category associated projects will leave "broken"
+        relationships between projects and catagories.
+"""
 
 
 @app.route("/get_categories")
 def get_categories():
-    categories = list(mongo.db.categories.find(
-        {"account_name": session.get("ACCOUNT")}) )
+
+    try:
+        categories = list(mongo.db.categories.find(
+            {"account_name": session.get("ACCOUNT")}))
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
 
     if len(categories) == 0:
         flash("Please add a category to get started")
@@ -68,23 +82,25 @@ def get_categories():
         for cat in categories:
             Get the count of projects in major states for each one
             cat["number_new"] = result
-    """  
-
-
-
+    """
     return render_template("categories.html", categories=categories)
-        
 
 
 @app.route("/category_add", methods=["GET", "POST"])
 def category_add():
     if request.method == "POST":
-       
+
         # Check if category already exists
+        # try:
+        name = request.form.get("category_name")
+        account = session.get("ACCOUNT")
         existing_cat = mongo.db.users.find_one(
             {"category_name": request.form.get("category_name").lower(),
-             "account_name": session.get("ACCOUNT")
-             })
+            "account_name": session.get("ACCOUNT")
+            })
+        # except:
+        #    flash("Error accessing the database.  Please retry")
+        #    return render_template("projects.html")  # send them back to "home"
 
         if existing_cat:
             flash("Category name already exists.  Please try a new one")
@@ -92,27 +108,66 @@ def category_add():
 
         category_data = {    # dictionary for insert
             "account_name": session.get("ACCOUNT"),
-            "category_name": request.form.get("category_notes"),
-            "category_notes": request.form.get("user_notes"),
+            "category_name": request.form.get("category_name"),
+            "category_notes": request.form.get("category_notes"),
             "date_created": date.today().strftime("%d %B, %Y"),
             "created_by": session.get("ACTIVE_USER")
         }
+        try:
+            mongo.db.categories.insert_one(category_data)
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
-        mongo.db.categories.insert_one(category_data)
         flash("Category Added")
         return redirect(url_for("get_categories"))
 
     # NOT a post so send along to category_add
     return render_template("category_add.html")
 
-@app.route("/category_edit")
-def category_edit():
-    return render_template("category_edit.html")
+"""                 
+NOTE:   Concern here is that editing a category name associated projects will leave "broken"
+        relationships between projects and catagories.  Will need to revisit this.
+        Consider doing a mass update of name for targeted projects?
+"""
+@app.route("/category_edit/<category_id>", methods=["GET", "POST"])
+def category_edit(category_id):
+    if request.method == "POST":
+        try:
+            mongo.db.categories.update( {'_id': ObjectId(category_id)},   
+            {'category_name':request.form.get('category_name')}
+            )
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
+        return redirect(url_for("get_categories"))
+
+    # Not a post, so get the row and send it to the edit page
+    category = mongo.db.categories.find_one({"_id": ObjectId(category_id)})
+    return render_template("category_edit.html", category=category)
+
+
+"""                 
+NOTE:   Concern here is that deleting a category associated projects will leave "broken"
+        relationships between projects and catagories.  Will need to revisit this
+"""
+@app.route("/category_delete/<category_id>")
+def category_delete(category_id):
+    try:
+        mongo.db.categories.remove({"_id": ObjectId(category_id)})
+    except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
+    flash("Category Deleted")
+    return redirect(url_for("get_categories"))
+
 
 
 """                 ===      PREFERENCE related code  (TBD)===    """
 
-#MIKE REMOVE IF NOT USED 
+# MIKE REMOVE IF NOT USED 
 @app.route("/get_preferences")
 def get_preferences():
     return render_template("preferences_tbd.html")
@@ -125,9 +180,13 @@ def get_preferences():
 def register():
     if request.method == "POST":
         # Check if account already exists in DB
-        existing_user = mongo.db.users.find_one(
-            {"account_name": request.form.get("account_name").lower()},
-            {"user_type": "account"})
+        try:
+            existing_user = mongo.db.users.find_one(
+                {"account_name": request.form.get("account_name").lower()},
+                {"user_type": "account"})
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
         if existing_user:
             flash("Account name unavailable.")
@@ -145,7 +204,11 @@ def register():
         }
 
         # add the new account
-        mongo.db.users.insert_one(register_data)
+        try:
+            mongo.db.users.insert_one(register_data)
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
         # put the new user into flask "session"
         session["ACCOUNT"] = request.form.get("account_name").lower()
@@ -160,8 +223,12 @@ def register():
 def login():
     if request.method == "POST":
         # Check if account already exists in DB
-        existing_user = mongo.db.users.find_one(
-            {"account_name": request.form.get("account_name").lower(), "user_type": "account"})
+        try:
+            existing_user = mongo.db.users.find_one(
+                {"account_name": request.form.get("account_name").lower(), "user_type": "account"})
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
         if existing_user:
             # now compare that against the one in the DB
@@ -195,11 +262,9 @@ def logout():
 
 
 """                 ===      USER related code  ===    """
-
-
 @app.route("/get_users")
 def get_users():
-    # MIKE ADD TRY CATCH.  Now just confirm we have the account active
+    
     if session.get("ACCOUNT") is None:
         flash("You must login first")
         return redirect(url_for("login"))
@@ -207,23 +272,46 @@ def get_users():
     if session.get("ACTIVE_USER") is None:
         flash("You must select a user name")
         return redirect(url_for("user_select"))
+    # get users
+    try:
+        users = list(mongo.db.users.find(
+            {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
 
-    users = list(mongo.db.users.find(
-        {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
     if len(users) == 0:
         flash("Please add a user to get started")
         return render_template("user_add.html")
+
     return render_template("users.html", users=users)
 
-
-@app.route("/user_edit")
+"""                 
+NOTE:   Concern here is that editing a user associated projects will leave "broken"
+        relationships between projects and users.  Will need to revisit this
+"""
+@app.route("/user_edit/<user_id>")
 def user_edit():
     return render_template("user_edit.html")
 
+"""                 
+NOTE:   Concern here is that deleting a user associated projects will leave "broken"
+        relationships between projects and users.  Will need to revisit this
+"""
+@app.route("/user_delete/<user_id>")
+def user_delete():
+    return render_template("user_edit.html")
+
+
 @app.route("/user_select")
 def user_select():
-    users = list(mongo.db.users.find(
-        {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
+    try:
+        users = list(mongo.db.users.find(
+            {"user_type": "user", "account_name": session.get("ACCOUNT")}).sort("username", 1))
+    except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
     if len(users) == 0:
         flash("Please add a user to get started")
         return render_template("user_add.html")
@@ -238,11 +326,6 @@ def user_set(user_name):
     flash(flash_message)
     
     return redirect(url_for("get_projects"))
-
-
-
-# MIKE Add some defensive programing here specially existing session data
-
 
 @app.route("/user_add", methods=["GET", "POST"])
 def user_add():
