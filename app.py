@@ -23,7 +23,7 @@ TO DO:
     - ALL try/except send the user back to home and do not handle specific exception types.
         Revisit return flow and see if there's a better way to inetrcept potential
         database errors abd get failure info
-    - review the .tolowere for db calls
+    - look at class="brand-logo"> for header wrap
 """
 
 """                 ===      PROJECT (Home) related code  ===    """

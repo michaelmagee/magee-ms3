@@ -60,19 +60,17 @@
 
         <!-- mobile sidenav -->
         <ul class="sidenav" id="mobile-demo">
-            <li>
-                <h4 class="center-align light-blue-text text-darken 4">Task Manager</h4>
-            </li>
-            <li><a href="#">Home</a></li>
-            {% if session.user %}
-            <li><a href="#">New Project</a></li>
-            <li><a href="#">Project Search</a></li>
-            <li><a href="#">Users</a></li>
-            <li><a href="#">Categories</a></li>
-            <li><a href="#">Log Out</a></li>
+            <li><a href="{{ url_for('get_projects') }}">Home</a></li>
+            {% if session.ACTIVE_USER %}
+            <!-- Dropdown Trigger -->
+            <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
+                        class="sidenav-trigger right fas fa-bars"></i></a></li>
+            <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
+                        class="sidenav-trigger right fas fa-bars"></i></a></li>
+            <li><a href="{{ url_for('logout') }}">Log Out</a></li>
             {% else %}
-            <li><a href="#">Log In</a></li>
-            <li><a href="#">Register</a></li>
+            <li><a href="{{ url_for('login') }}">Log In</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
         </ul>
     </header>
