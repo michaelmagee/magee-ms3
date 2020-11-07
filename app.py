@@ -23,7 +23,7 @@ TO DO:
     - ALL try/except send the user back to home and do not handle specific exception types.
         Revisit return flow and see if there's a better way to inetrcept potential
         database errors abd get failure info
-
+    - review the .tolowere for db calls
 """
 
 """                 ===      PROJECT (Home) related code  ===    """
@@ -92,9 +92,8 @@ def category_add():
 
         # Check if category already exists
         # try:
-        name = request.form.get("category_name")
-        account = session.get("ACCOUNT")
-        existing_cat = mongo.db.users.find_one(
+
+        existing_cat = mongo.db.categories.find_one(
             {"category_name": request.form.get("category_name").lower(),
             "account_name": session.get("ACCOUNT")
             })
@@ -134,9 +133,10 @@ NOTE:   Concern here is that editing a category name associated projects will le
 def category_edit(category_id):
     if request.method == "POST":
         try:
+            # retain non displayed values, note: uspsert appears to be false in the doc
             mongo.db.categories.update( {'_id': ObjectId(category_id)},   
-            {'category_name':request.form.get('category_name')}
-            )
+            {"$set": {'category_name': request.form.get('category_name'),
+                "category_notes": request.form.get('category_notes') }} )
         except: 
             flash("Error accessing the database.  Please retry")
             return render_template("projects.html")  # send them back to "home"
@@ -246,7 +246,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # remove user & account from Flask session (NOT the cookie)
+    # remove user, account and admin status from Flask session (NOT the cookie)
 
     if session.get("ACCOUNT") is None:
         flash("You were already logged out")
@@ -256,6 +256,9 @@ def logout():
     if session.get("ACTIVE_USER") is not None:
         session.pop("ACTIVE_USER")
 
+    if session.get("ACTIVE_ADMIN") is not None:
+        session.pop("ACTIVE_ADMIN")
+        
     flash("You are logged out")
     
     return redirect(url_for("login"))
@@ -315,13 +318,31 @@ def user_select():
     if len(users) == 0:
         flash("Please add a user to get started")
         return render_template("user_add.html")
+
     return render_template("user_select.html", users=users)
 
+# sets the active "User" 
 @app.route("/user_set/<user_name>")
 def user_set(user_name):
+    try:
+       new_user = mongo.db.users.find_one(
+            {"user_name": user_name,
+             "account_name": session.get("ACCOUNT"),
+             "user_type": "user"})
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
+    
+    # set the active user name
     if session.get("ACTIVE_USER") is not None:
         session.pop("ACTIVE_USER")
     session["ACTIVE_USER"] = user_name
+
+    # set the admin status of the user 
+    if session.get("ACTIVE_ADMIN") is not None:
+        session.pop("ACTIVE_ADMIN")
+    session["ACTIVE_ADMIN"] = new_user["user_admin"]
+
     flash_message =("User: ", user_name,  "is now active.")
     flash(flash_message)
     
@@ -330,25 +351,33 @@ def user_set(user_name):
 @app.route("/user_add", methods=["GET", "POST"])
 def user_add():
     if request.method == "POST":
-        # See if this is the first user added and make it active in session
+        account_name = session.get("ACCOUNT")
+        # See if this is the first user added and make it active in session 
         users_exist = len(list(mongo.db.users.find(
-            {"user_type": "user", "username": session.get("ACCOUNT")})))
+            {"user_type": "user", "account_name": account_name })))
 
         # Check if account/user already exists
         existing_user = mongo.db.users.find_one(
             {"user_name": request.form.get("user_name").lower(),
-             "account_name": session.get("ACCOUNT"),
+             "account_name": account_name,
              "user_type": "user"})
 
         if existing_user:
             flash("User name already exists.  Please try a new one")
             return redirect(url_for("get_users"))
-
+        
+        # If this is the first user added after account creation, 
+        # make this user an admin
+        if users_exist == 0:
+            user_admin = True
+        else:
+            user_admin = False
         user_data = {    # dictionary for insert
-            "account_name": session.get("ACCOUNT"),
+            "account_name": account_name,
             "password": "",
             "user_type": "user",
-            "user_name": request.form.get("user_name"),
+            "user_admin": user_admin,
+            "user_name": request.form.get("user_name").lower(),
             "user_notes": request.form.get("user_notes"),
             "account_status": "active",         # possibly locked in future?
             "date_created": date.today().strftime("%d %B, %Y"),
@@ -360,8 +389,11 @@ def user_add():
         flash("New user Added")
 
         # if the initial user count was 0, this user can be set as the active user in session
+        # Also add the  fact that they are an admin 
         if users_exist == 0:
             session["ACTIVE_USER"] = request.form.get("user_name").lower()
+            session["ACTIVE_ADMIN"] = user_admin
+
         return redirect(url_for("get_users"))
 
     return render_template("user_add.html")
