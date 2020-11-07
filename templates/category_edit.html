@@ -9,9 +9,9 @@
         <div class="row">
             <div class="input-field col s12">
                 <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
-                <input id="category_name" name="category_name" minlength="3" maxlength="25" type="text" class="validate"
-                    required>
-                <label for="category_name">{{category.category_name}}</label>
+                <input id="category_name" name="category_name" minlength="3" maxlength="25" 
+                type="text" class="validate" value={{category.category_name}} required>
+                <label for="category_name">Category Name</label>
             </div>
         </div>
         <!--    Category Notes    -->
@@ -19,8 +19,8 @@
             <div class="input-field col s12">
                 <i class="fas fa-align-left prefix light-blue-text text-darken-4"></i>
                 <textarea id="category_notes" name="category_notes" minlength="1" maxlength="50"
-                    class="materialize-textarea" required></textarea>
-                <label for="category_notes">{{category.category_notes}}</label>
+                    class="materialize-textarea" required>{{category.category_notes}}</textarea>
+                <label for="category_notes">Category Notes</label>
             </div>
         <!-- submit button -->
         <div class="row">

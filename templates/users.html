@@ -10,9 +10,11 @@
         <a href="{{ url_for('user_select') }}" class="btn-large light-green darken-2 text-shadow">
             Select User <i class="fas fa-plus-square right"></i>
         </a>
+        {% if session.ACTIVE_ADMIN %}
         <a href="{{ url_for('user_add') }}" class="btn-large light-blue darken-2 text-shadow">
             Add User <i class="fas fa-plus-square right"></i>
         </a>
+        {% endif %}
     </div>
 </div>
 
@@ -26,8 +28,10 @@
                     <p>{{ user.user_notes }}</p>
                 </div>
                 <div class="card-action">
+                    {% if session.ACTIVE_ADMIN %}
                     <a href="{{ url_for('user_edit', user_id=user._id) }}" class="btn green accent-4">Edit</a>
-                    <a href="#" class="btn grey lighten-1">Delete</a>
+                    <a href="{{ url_for('user_delete', user_id=user._id) }}" class="btn grey lighten-1">Delete</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

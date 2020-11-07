@@ -90,16 +90,15 @@ def get_categories():
 def category_add():
     if request.method == "POST":
 
-        # Check if category already exists
-        # try:
-
-        existing_cat = mongo.db.categories.find_one(
-            {"category_name": request.form.get("category_name").lower(),
-            "account_name": session.get("ACCOUNT")
-            })
-        # except:
-        #    flash("Error accessing the database.  Please retry")
-        #    return render_template("projects.html")  # send them back to "home"
+        # Check if category already exists  (No lower case issues) 
+        try:
+            existing_cat = mongo.db.categories.find_one(
+                {"category_name": request.form.get("category_name"),
+                "account_name": session.get("ACCOUNT")
+                })
+        except:
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
         if existing_cat:
             flash("Category name already exists.  Please try a new one")
@@ -293,17 +292,39 @@ def get_users():
 NOTE:   Concern here is that editing a user associated projects will leave "broken"
         relationships between projects and users.  Will need to revisit this
 """
-@app.route("/user_edit/<user_id>")
-def user_edit():
-    return render_template("user_edit.html")
+@app.route("/user_edit/<user_id>", methods=["GET", "POST"])
+def user_edit(user_id):
+    if request.method == "POST":
+        try:
+            # retain non displayed values, note: uspsert appears to be false in the doc
+            mongo.db.users.update( {'_id': ObjectId(user_id)},   
+            {"$set": {'user_name': request.form.get('user_name'),
+                "user_notes": request.form.get('user_notes') }} )
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
+        return redirect(url_for("get_users"))
+
+    # Not a post, so get the row and send it to the edit page
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    return render_template("user_edit.html", user=user)
 
 """                 
 NOTE:   Concern here is that deleting a user associated projects will leave "broken"
         relationships between projects and users.  Will need to revisit this
+        For now, only an "admin" can do it 
 """
 @app.route("/user_delete/<user_id>")
-def user_delete():
-    return render_template("user_edit.html")
+def user_delete(user_id):
+    try:
+        mongo.db.users.remove({"_id": ObjectId(user_id)})
+    except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
+    flash("User Deleted")
+    return redirect(url_for("get_users"))
 
 
 @app.route("/user_select")
