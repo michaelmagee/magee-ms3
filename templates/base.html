@@ -25,6 +25,7 @@
             <li class="divider"></li>
             <li><a href="{{ url_for('projects_search') }}">Search</a></li>
         </ul>
+
         <!-- System Dropdown Structure -->
         <ul id="system_dropdown" class="dropdown-content">
             <li><a href="{{ url_for('get_users') }}">Users</a></li>
@@ -33,17 +34,17 @@
             <li class="divider"></li>
             <li><a href="{{ url_for('get_preferences') }}">Settings</a></li>
         </ul>
+
         <!-- top navbar -->
         <nav class="nav-extended text-shadow light-blue darken-1">
             <div class="nav-wrapper">
-                <!-- a href="#" class="brand-logo">Honey Do?</a  -->
-                <a href="#" class="brand-logo">  Honey Do? 
-                    {% if session.ACCOUNT %}/{{ session.ACCOUNT }}{% endif %} 
-                    {% if session.ACTIVE_USER %}  / {{ session.ACTIVE_USER }}{% endif %}</a>
+                <a href="#" class="brand-logo"> Honey Do?
+                    {% if session.ACCOUNT %}/{{ session.ACCOUNT }}{% endif %}
+                    {% if session.ACTIVE_USER %} / {{ session.ACTIVE_USER }}{% endif %}</a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="fas fa-bars"></i></a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="{{ url_for('get_projects') }}">Home</a></li>
-                    {% if session.ACTIVE_USER %}
+                    {%if session.ACTIVE_USER %}
                     <!-- Dropdown Trigger -->
                     <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
                                 class="sidenav-trigger right fas fa-bars"></i></a></li>
@@ -58,14 +59,30 @@
             </div>
         </nav>
 
-        <!-- mobile sidenav -->
+        <!-- mobile sidenav   Needed these duplicated sections becausee under the covers,
+                            for some reason, the last in got the visibility -->
+        <!-- Mobile System Dropdown Structure -->
+        <ul id="mobile_system_dropdown" class="dropdown-content">
+            <li><a href="{{ url_for('get_users') }}">Users</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('get_categories') }}">Categories</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('get_preferences') }}">Settings</a></li>
+        </ul>
+        <!-- Projects Dropdown Structure -->
+        <ul id="mobile_projects_dropdown" class="dropdown-content">
+            <li><a href="{{ url_for('project_add') }}">New Project</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('projects_search') }}">Search</a></li>
+        </ul>
         <ul class="sidenav" id="mobile-demo">
+
             <li><a href="{{ url_for('get_projects') }}">Home</a></li>
-            {% if session.ACTIVE_USER %}
+            {%if session.ACTIVE_USER %}
             <!-- Dropdown Trigger -->
-            <li><a class="dropdown-trigger" href="#!" data-target="projects_dropdown">Project<i
+            <li><a class="dropdown-trigger" href="#!" data-target="mobile_projects_dropdown">Project<i
                         class="sidenav-trigger right fas fa-bars"></i></a></li>
-            <li><a class="dropdown-trigger" href="#!" data-target="system_dropdown">System<i
+            <li><a class="dropdown-trigger" href="#!" data-target="mobile_system_dropdown">System<i
                         class="sidenav-trigger right fas fa-bars"></i></a></li>
             <li><a href="{{ url_for('logout') }}">Log Out</a></li>
             {% else %}

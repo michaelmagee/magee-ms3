@@ -8,22 +8,30 @@ Magee Milestone3 JavaScript
 jQuery for MaterializeCSS initialization
 */
 
+
 $(document).ready(function () {
-    $(".dropdown-trigger").dropdown();  /* Navbar Dropdown Menu */
+    $(".dropdown-trigger").dropdown();
     $(".sidenav").sidenav({ edge: "right" });
     $('.collapsible').collapsible();
     $('.tooltipped').tooltip();
     $('select').formSelect();
+    $('.datepicker').datepicker({
+        format: "dd mmmm, yyyy",
+        yearRange: 3,
+        showClearBtn: true,
+        i18n: {
+            done: "select"
+        }
     });
 
     /* 
 
-    This code mitigates some deep processing that materialize uses to render drop downs/input fields.  
+    This code mitegates some deep processing that materialize uses to render drop downs/input fields.  
     It was provided by code institute. 
     It is described in great detail at https://www.youtube.com/watch?v=CG36uQtAzkU&feature=youtu.be ,
     starting at about 205 seconds in.
 
-    */ 
+    */
 
     validateMaterializeSelect();
     function validateMaterializeSelect() {
@@ -52,7 +60,6 @@ $(document).ready(function () {
             }
         });
     }
-
-
+});
 
 

@@ -42,9 +42,30 @@ def get_projects():
     return render_template("projects.html")
 
 
-@app.route("/project_add")
+@app.route("/project_add", methods=["GET", "POST"])
 def project_add():
-    return render_template("project_add.html")
+    if request.method == "POST":
+        project_is_urgent = "on" if request.form.get("project_is_urgent") else "off"
+        new_project = {
+            "project_category_name": request.form.get("project_category_name"),
+            "project_name": request.form.get("project_name"),
+            "project_description": request.form.get("project_description"),
+            "project_due_date": request.form.get("project_due_date"),
+            "project_is_urgent": project_is_urgent,
+            "project_status": "new",
+            "project_date_created": date.today().strftime("%d %B, %Y"),
+            "project_created_by": session["ACTIVE_USER"]   # will be username not logged name
+        }
+        mongo.db.projects.insert_one(new_project)
+        flash("Task Added")
+        return redirect(url_for("get_projects"))
+
+    # else it's a get
+    all_categories = list(mongo.db.categories.find().sort(
+        "category_name", 1))  # sort ascending
+    return render_template("project_add.html", categories=all_categories)
+
+
 
 
 @app.route("/project_edit")
