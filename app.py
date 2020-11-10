@@ -18,6 +18,12 @@ app.secret_key = os.getenv("MS3_SECRET_KEY")
 # *** wires PyMongo to the APP and saves mongo
 mongo = PyMongo(app)
 
+# Common values for dropdowns
+hours = [1,2,3,4,5,6,7,8,9,10]
+priorities = [1,2,3,4,5,6,7,8,9,10]
+points = [1,5,10,15,20,25]
+
+
 """
 TO DO:
     - ALL try/except send the user back to home and do not handle specific exception types.
@@ -79,9 +85,7 @@ def project_add():
     # else it's a get
     all_categories = list(mongo.db.categories.find().sort(
         "category_name", 1))  # sort ascending
-    hours = [1,2,3,4,5,6,7,8,9,10]
-    priorities = [1,2,3,4,5,6,7,8,9,10]
-    points = [1,5,10,15,20,25]
+    
     return render_template("project_add.html", categories=all_categories, priorities=priorities, points=points, hours=hours)
 
 # change status to closed
@@ -119,9 +123,39 @@ def project_open(project_id):
         return render_template("projects.html")  # send them back to "home"
 
 
-@app.route("/project_edit")
-def project_edit():
-    return render_template("projects_edit.html")
+@app.route("/project_edit/<project_id>", methods=["GET", "POST"])
+def project_edit(project_id):
+    if request.method == "POST":
+        project_is_urgent = "on" if request.form.get("project_is_urgent") else "off"
+        try:
+            mongo.db.projects.find_one_and_update({"_id": ObjectId(project_id)}, 
+                {"$set": 
+                {"project_category_name": request.form.get("project_category_name"),
+                "project_name": request.form.get("project_name"),
+                "project_description": request.form.get("project_description"),
+                "project_due_date": request.form.get("project_due_date"),
+                "project_is_urgent": project_is_urgent,
+                "project_priority": request.form.get("project_priority"),
+                "project_points": request.form.get("project_points"),
+                "project_hour_estimate": request.form.get("project_hour_estimate")}})
+            flash("Project Updated")
+            return redirect(url_for("get_projects"))
+        except:
+            flash("Error accessing the database.  Please retry")
+            return redirect(url_for("get_projects"))
+
+    # else it's a get
+    # get the project and the categories necessary and pass to the project_edit.html
+    try:
+        project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+        all_categories = list(mongo.db.categories.find().sort(
+            "category_name", 1))  # sort ascending
+        return render_template("project_edit.html", project=project, categories=all_categories, 
+            priorities=priorities, points=points, hours=hours)
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
+
 
 
 @app.route("/projects_search")

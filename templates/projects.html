@@ -7,7 +7,7 @@
     {% for project in projects %}
     <li>
         <div class="collapsible-header white-text light-blue darken-4 text-shadow">
-            <div class="col s3">
+            <div class="col s4">
                 <i class="fasfa-caret-down"></i>
                 <!--  hide these buttons if it's not a good user -->
                 {% if project.project_status != "open" %}
@@ -16,7 +16,7 @@
                     <a href="{{ url_for('project_edit', project_id=project._id ) }}" class="btn-small light-blue lighten-1">Edit</a>
                     <a href="{{ url_for('project_close', project_id=project._id ) }}" class="btn-small grey darken-1">Close</a>
             </div>
-            <div class="col s9">
+            <div class="col s8">
                 <strong> - {{ project.project_name }}</strong> : {{ project.project_due_date }}
                 {% if project.project_is_urgent == "on" %}
                 <i class="fas fa-exclamation-circle light-blue-text text-lighten-2 tooltipped" data-position="right"
