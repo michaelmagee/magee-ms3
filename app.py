@@ -38,9 +38,12 @@ def get_projects():
     if session.get("ACTIVE_USER") is None:
         flash("You must select your user name")
         return redirect(url_for("user_select"))
-
-    return render_template("projects.html")
-
+    try:
+        projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"}} ) )
+        return render_template("projects.html", projects=projects)
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
 
 @app.route("/project_add", methods=["GET", "POST"])
 def project_add():
@@ -53,19 +56,67 @@ def project_add():
             "project_due_date": request.form.get("project_due_date"),
             "project_is_urgent": project_is_urgent,
             "project_status": "new",
+            "project_priority": request.form.get("project_priority"),
+            "project_points": request.form.get("project_points"),
+            "project_hour_estimate": request.form.get("project_hour_estimate"),
             "project_date_created": date.today().strftime("%d %B, %Y"),
-            "project_created_by": session["ACTIVE_USER"]   # will be username not logged name
+            "project_created_by": session["ACTIVE_USER"],   # will be username not logged name
+            "project_date_opened": "",
+            "project_opened_by": "",
+            "project_date_closed": "",
+            "project_closed_by": ""
+
         }
-        mongo.db.projects.insert_one(new_project)
-        flash("Task Added")
-        return redirect(url_for("get_projects"))
+        try:
+
+            mongo.db.projects.insert_one(new_project)
+            flash("Task Added")
+            return redirect(url_for("get_projects"))
+        except:
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
 
     # else it's a get
     all_categories = list(mongo.db.categories.find().sort(
         "category_name", 1))  # sort ascending
-    return render_template("project_add.html", categories=all_categories)
+    hours = [1,2,3,4,5,6,7,8,9,10]
+    priorities = [1,2,3,4,5,6,7,8,9,10]
+    points = [1,5,10,15,20,25]
+    return render_template("project_add.html", categories=all_categories, priorities=priorities, points=points, hours=hours)
 
+# change status to closed
+@app.route("/project_close/<project_id>")
+def project_close(project_id):
+    project_date_closed = date.today().strftime("%d %B, %Y"),
+    project_closed_by = session["ACTIVE_USER"] 
+    try:
+        mongo.db.projects.find_one_and_update({"_id": ObjectId(project_id)}, 
+            {"$set": {"project_status": "closed", 
+            "project_date_closed": project_date_closed, 
+            "project_closed_by": project_closed_by}})
+        flash("Project Closed")
+        return redirect(url_for("get_projects"))
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
 
+# change status to open
+@app.route("/project_open/<project_id>")
+def project_open(project_id):
+
+    project_date_opened = date.today().strftime("%d %B, %Y"),
+    project_opened_by = session["ACTIVE_USER"] 
+    try:
+        mongo.db.projects.find_one_and_update({"_id": ObjectId(project_id)}, 
+            {"$set": {"project_status": "open", 
+            "project_date_opened": project_date_opened, 
+            "project_opened_by": project_opened_by 
+            }})
+        flash("Project Opened")
+        return redirect(url_for("get_projects"))
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
 
 
 @app.route("/project_edit")
