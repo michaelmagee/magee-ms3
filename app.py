@@ -46,7 +46,13 @@ def get_projects():
         return redirect(url_for("user_select"))
     try:
         projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
-        return render_template("projects.html", projects=projects)
+        # pass along project counts  Probably a better way to do this via some aggregation or something
+        status_counts = {}
+        status_counts["closed"] = mongo.db.projects.find({"project_status":"closed",  "project_account_name": session["ACCOUNT"]} ).count()
+        status_counts["new"] = mongo.db.projects.find({"project_status":"new",  "project_account_name": session["ACCOUNT"]} ).count()
+        status_counts["open"] = mongo.db.projects.find({"project_status":"open",  "project_account_name": session["ACCOUNT"]} ).count()
+
+        return render_template("projects.html", projects=projects, status_counts=status_counts)
     except:
         flash("Error accessing the database.  Please retry")
         return render_template("projects.html")  # send them back to "home"
@@ -84,22 +90,27 @@ def project_add():
             return render_template("projects.html")  # send them back to "home"
 
     # else it's a get
-    all_categories = list(mongo.db.categories.find().sort(
+    all_categories = list(mongo.db.categories.find({"account_name": session.get("ACCOUNT")}).sort(
         "category_name", 1))  # sort ascending
     
     return render_template("project_add.html", categories=all_categories, priorities=priorities, points=points, hours=hours)
 
 # change status to closed
+
 @app.route("/project_close/<project_id>")
 def project_close(project_id):
-    project_date_closed = date.today().strftime("%d %B, %Y"),
-    project_closed_by = session["ACTIVE_USER"] 
     try:
         mongo.db.projects.find_one_and_update({"_id": ObjectId(project_id)}, 
             {"$set": {"project_status": "closed", 
-            "project_date_closed": project_date_closed, 
-            "project_closed_by": project_closed_by}})
+            "project_date_closed": date.today().strftime("%d %B, %Y"), 
+            "project_closed_by": session["ACTIVE_USER"]}})
         flash("Project Closed")
+
+        # Now grab the points for this project 
+        # and increment the balance of the user doing it
+        project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+        mongo.db.users.find_one_and_update({"account_name": session["ACCOUNT"], "user_name":session["ACTIVE_USER"] },
+                               {"$inc": {"user_points": project["project_points"]} } )
         return redirect(url_for("get_projects"))
     except:
         flash("Error accessing the database.  Please retry")
@@ -109,13 +120,11 @@ def project_close(project_id):
 @app.route("/project_open/<project_id>")
 def project_open(project_id):
 
-    project_date_opened = date.today().strftime("%d %B, %Y"),
-    project_opened_by = session["ACTIVE_USER"] 
     try:
         mongo.db.projects.find_one_and_update({"_id": ObjectId(project_id)}, 
             {"$set": {"project_status": "open", 
-            "project_date_opened": project_date_opened, 
-            "project_opened_by": project_opened_by 
+            "project_date_opened": date.today().strftime("%d %B, %Y"), 
+            "project_opened_by": session["ACTIVE_USER"]  
             }})
         flash("Project Opened")
         return redirect(url_for("get_projects"))
@@ -149,7 +158,7 @@ def project_edit(project_id):
     # get the project and the categories necessary and pass to the project_edit.html
     try:
         project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
-        all_categories = list(mongo.db.categories.find().sort(
+        all_categories = list(mongo.db.categories.find({"account_name": session.get("ACCOUNT")}).sort(
             "category_name", 1))  # sort ascending
         return render_template("project_edit.html", project=project, categories=all_categories, 
             priorities=priorities, points=points, hours=hours)

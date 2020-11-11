@@ -16,7 +16,7 @@ $(document).ready(function () {
     $('.tooltipped').tooltip();
     $('select').formSelect();
     $('.datepicker').datepicker({
-        format: "dd mmmm, yyyy",
+        format: "mmmm dd, yyyy",
         yearRange: 3,
         showClearBtn: true,
         i18n: {
