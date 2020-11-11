@@ -38,14 +38,14 @@ TO DO:
 @app.route("/")
 def get_projects():
     if session.get("ACCOUNT") is None:
-        flash("You must login first")
+        flash("You must register or login first")
         return redirect(url_for("login"))
 
     if session.get("ACTIVE_USER") is None:
         flash("You must select your user name")
         return redirect(url_for("user_select"))
     try:
-        projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"}} ) )
+        projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
         return render_template("projects.html", projects=projects)
     except:
         flash("Error accessing the database.  Please retry")
@@ -67,6 +67,7 @@ def project_add():
             "project_hour_estimate": request.form.get("project_hour_estimate", type=int),
             "project_date_created": date.today().strftime("%d %B, %Y"),
             "project_created_by": session["ACTIVE_USER"],   # will be username not logged name
+            "project_account_name": session["ACCOUNT"],    
             "project_date_opened": "",
             "project_opened_by": "",
             "project_date_closed": "",
@@ -317,6 +318,35 @@ def register():
 
         # put the new user into flask "session"
         session["ACCOUNT"] = request.form.get("account_name").lower()
+
+        # add a few default categories just to get them started 
+        home_category = {   
+            "account_name": session.get("ACCOUNT"),"category_name": "Home",
+            "category_notes": "Home related category",
+            "date_created": date.today().strftime("%d %B, %Y"),
+            "created_by": "default"
+        }
+        work_category = {   
+            "account_name": session.get("ACCOUNT"),"category_name": "work",
+            "category_notes": "Work related category",
+            "date_created": date.today().strftime("%d %B, %Y"),
+            "created_by": "default"
+        }
+        other_category = {     
+            "account_name": session.get("ACCOUNT"),"category_name": "Other",
+            "category_notes": "Other category",
+            "date_created": date.today().strftime("%d %B, %Y"),
+            "created_by": "default"
+        }
+        try:
+            mongo.db.categories.insert_one(home_category)
+            mongo.db.categories.insert_one(work_category)
+            mongo.db.categories.insert_one(other_category)
+        except: 
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+
+
         flash("Registration Successful")
 
         return redirect(url_for("get_users", account_name=session.get("ACCOUNT")))
@@ -363,6 +393,9 @@ def logout():
 
     if session.get("ACTIVE_ADMIN") is not None:
         session.pop("ACTIVE_ADMIN")
+    
+    if session.get("ACCOUNT") is not None:
+        session.pop("ACCOUNT")
         
     flash("You are logged out")
     
