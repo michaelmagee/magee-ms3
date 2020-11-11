@@ -194,11 +194,26 @@ def get_categories():
         return render_template("category_add.html")
 
     # here is where will embed the category counts
-    """
-        for cat in categories:
-            Get the count of projects in major states for each one
-            cat["number_new"] = result
-    """
+    for cat in categories:
+        
+        # Get all of the totals for various categories 
+        category_project_count_closed = mongo.db.projects.find({"project_status":"closed", 
+                    "project_category_name": cat['category_name'],  
+                    "project_account_name": session["ACCOUNT"]} ).count()
+        
+        category_project_count_open = mongo.db.projects.find({"project_status":"open", 
+                    "project_category_name": cat['category_name'],  
+                    "project_account_name": session["ACCOUNT"]} ).count()
+        
+        category_project_count_new = mongo.db.projects.find({"project_status":"new", 
+                    "project_category_name": cat['category_name'],  
+                    "project_account_name": session["ACCOUNT"]} ).count()
+
+        cat["category_project_count_closed"] = category_project_count_closed
+        cat["category_project_count_open"] = category_project_count_open
+        cat["category_project_count_new"] = category_project_count_new
+        cat["category_project_count_total"] = category_project_count_new + category_project_count_open + category_project_count_closed
+
     return render_template("categories.html", categories=categories)
 
 
@@ -336,7 +351,7 @@ def register():
             "created_by": "default"
         }
         work_category = {   
-            "account_name": session.get("ACCOUNT"),"category_name": "work",
+            "account_name": session.get("ACCOUNT"),"category_name": "Work",
             "category_notes": "Work related category",
             "date_created": date.today().strftime("%d %B, %Y"),
             "created_by": "default"

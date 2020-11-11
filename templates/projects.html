@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3 class="light-blue-text text-darken-4 center-align">All Projects</h3>
+<h4 class="light-blue-text text-darken-4 center-align">
+    Projects: New({{status_counts["new"]}}) / Open({{status_counts["open"]}}) / Closed({{status_counts["closed"]}})</h4>
 
 <ul class="collapsible">
     {% for project in projects %}

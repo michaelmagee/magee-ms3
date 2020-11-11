@@ -19,10 +19,16 @@
                     <span class="card-title">{{ category.category_name }}</span>
                     <p> {{ category.category_notes }} </p>
                     <p>Created by: {{ category.created_by }} on: {{ category.date_created }} </p>
+                    <p>Has {{ category.category_project_count_total}} projects </p>
+                    <p>Open({{ category.category_project_count_open }})  
+                        Closed({{ category.category_project_count_closed }})  
+                        New({{ category.category_project_count_new }} )</p>
                 </div>
                 <div class="card-action">
                     <a href="{{ url_for('category_edit', category_id=category._id) }}" class="btn green accent-4">Edit</a>
+                    {% if session.ACTIVE_ADMIN %}
                     <a href="{{ url_for('category_delete', category_id=category._id) }}" class="btn light-blue lighten-1">Delete</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
