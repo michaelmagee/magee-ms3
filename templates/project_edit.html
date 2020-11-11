@@ -59,12 +59,12 @@
             <div class="input-field col s12">
                 <i class="fas fa-thermometer-half prefix light-blue-text text-darken-4"></i>
                 <select id="project_priority" name="project_priority" class="validate" required>
-                    <option value="" disabled selected>{{ project.project_priority }}</option>
+                    <option value="" disabled selected>Select Priority</option>
                     {% for priority in priorities %}
                         {% if priority == project.project_priority %}
-                            <option value="{{ project.project_priority }}" selected>{{ priority }}</option>
+                            <option value="{{ priority }}" selected>{{ priority }}</option>
                         {% else %}
-                        <option value="{{ project.project_priority }}">{{ priority }}</option>
+                        <option value="{{ priority }}">{{ priority }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -72,18 +72,17 @@
             </div>
         </div>
 
-
         <!--    Points assigned    -->
         <div class="row">
             <div class="input-field col s12">
                 <i class="fas fa-trophy prefix light-blue-text text-darken-4"></i>
                 <select id="project_points" name="project_points" class="validate" required>
-                    <option value="" disabled selected>{{ project.project_points }}</option>
+                    <option value="" disabled selected>Select Points</option>
                     {% for point_award in points %}
-                        {% if point_award == project.project_priority %}
-                            <option value="{{ project.project_points }}" selected>{{ point_award }}</option>
+                        {% if point_award == project.project_points %}
+                            <option value="{{ point_award}}" selected>{{ point_award }}</option>
                         {% else %}
-                            <option value="{{ project.project_points }}">{{ point_award }}</option>
+                            <option value="{{ point_award }}">{{ point_award }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -96,12 +95,12 @@
             <div class="input-field col s12">
                 <i class="fas fa-clock-o prefix light-blue-text text-darken-4"></i>
                 <select id="project_hour_estimate" name="project_hour_estimate" class="validate" required>
-                    <option value="" disabled selected>{{project.project_hour_estimate}}</option>
+                    <option value="" disabled selected>Estimated hours</option>
                     {% for hour_estimate in hours %}
                         {% if hour_estimate == project.project_hour_estimate %}
-                            <option value="{{ project.project_hour_estimate }}" selected>{{ hour_estimate }}</option>
+                            <option value="{{ hour_estimate }}" selected>{{ hour_estimate }}</option>
                         {% else %}
-                            <option value="{{ project.project_hour_estimate }}">{{ hour_estimate }}</option>
+                            <option value="{{ hour_estimate }}">{{ hour_estimate }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>

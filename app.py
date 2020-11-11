@@ -62,9 +62,9 @@ def project_add():
             "project_due_date": request.form.get("project_due_date"),
             "project_is_urgent": project_is_urgent,
             "project_status": "new",
-            "project_priority": request.form.get("project_priority"),
-            "project_points": request.form.get("project_points"),
-            "project_hour_estimate": request.form.get("project_hour_estimate"),
+            "project_priority": request.form.get("project_priority", type=int),
+            "project_points": request.form.get("project_points", type=int),
+            "project_hour_estimate": request.form.get("project_hour_estimate", type=int),
             "project_date_created": date.today().strftime("%d %B, %Y"),
             "project_created_by": session["ACTIVE_USER"],   # will be username not logged name
             "project_date_opened": "",
@@ -135,9 +135,9 @@ def project_edit(project_id):
                 "project_description": request.form.get("project_description"),
                 "project_due_date": request.form.get("project_due_date"),
                 "project_is_urgent": project_is_urgent,
-                "project_priority": request.form.get("project_priority"),
-                "project_points": request.form.get("project_points"),
-                "project_hour_estimate": request.form.get("project_hour_estimate")}})
+                "project_priority": request.form.get("project_priority", type=int),
+                "project_points": request.form.get("project_points", type=int),
+                "project_hour_estimate":request.form.get("project_hour_estimate", type=int) }} )
             flash("Project Updated")
             return redirect(url_for("get_projects"))
         except:
