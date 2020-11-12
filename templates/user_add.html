@@ -18,18 +18,35 @@
         <div class="row">
             <div class="input-field col s12">
                 <i class="fas fa-align-left prefix light-blue-text text-darken-4"></i>
-                <textarea id="user_notes" name="user_notes" minlength="1" maxlength="100"
-                    class="materialize-textarea" required></textarea>
+                <textarea id="user_notes" name="user_notes" minlength="1" maxlength="100" class="materialize-textarea"
+                    required></textarea>
                 <label for="user_notes">User Notes</label>
             </div>
-        <!-- submit button -->
-        <div class="row">
-            <div class="col s12 center-align">
-                <button type="submit" class="btn-large light-blue darken-1 text-shadow">
-                    Add User <i class="fas fa-plus-square right"></i>
-                </button>
+
+            <!--    Is Admin  Only an Admin can make an admin -->
+            {% if session.ACTIVE_ADMIN %}
+            <div class="row">
+                <div class="input-field col s12">
+                    <div class="switch">
+                        <i class="fas fa-bolt prefix red-text"></i>
+                        <label for="user_admin">
+                            <input type="checkbox" id="user_admin" name="user_admin">
+                            <span class="lever"></span>
+                            Admin Authority
+                        </label>
+                    </div>
+                </div>
             </div>
-        </div>
+            {% endif %} 
+
+            <!-- submit button -->
+            <div class="row">
+                <div class="col s12 center-align">
+                    <button type="submit" class="btn-large light-blue darken-1 text-shadow">
+                        Add User <i class="fas fa-plus-square right"></i>
+                    </button>
+                </div>
+            </div>
     </form>
 </div>
 

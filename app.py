@@ -1,3 +1,11 @@
+#
+# Mike Magee  Milestone 3 for Code Institute
+#
+"""
+TO DO:
+    - 
+"""
+
 import os
 from flask import (Flask, render_template, redirect, request, url_for,
                    flash, session)
@@ -23,14 +31,6 @@ hours = [1,2,3,4,5,6,7,8,9,10]
 priorities = [1,2,3,4,5,6,7,8,9,10]
 points = [1,5,10,15,20,25]
 
-
-"""
-TO DO:
-    - ALL try/except send the user back to home and do not handle specific exception types.
-        Revisit return flow and see if there's a better way to inetrcept potential
-        database errors abd get failure info
-    - look at class="brand-logo"> for header wrap
-"""
 
 """                 ===      PROJECT (Home) related code  ===    """
 
@@ -459,10 +459,18 @@ NOTE:   Concern here is that editing a user associated projects will leave "brok
 def user_edit(user_id):
     if request.method == "POST":
         try:
-            # retain non displayed values, note: uspsert appears to be false in the doc
-            mongo.db.users.update( {'_id': ObjectId(user_id)},   
-            {"$set": {'user_name': request.form.get('user_name'),
-                "user_notes": request.form.get('user_notes') }} )
+        # If this is an admin, respect the admin switch, else no
+            user_admin = True if request.form.get("user_admin") == "on" else False
+            if session["ACTIVE_ADMIN"] == True: 
+                mongo.db.users.update( {'_id': ObjectId(user_id)},   
+                {"$set": {'user_name': request.form.get('user_name'),
+                    "user_notes": request.form.get('user_notes'), 
+                    "user_admin": user_admin}} )
+            else: 
+                mongo.db.users.update( {'_id': ObjectId(user_id)},   
+                {"$set": {'user_name': request.form.get('user_name'),
+                    "user_notes": request.form.get('user_notes') }} )
+
         except: 
             flash("Error accessing the database.  Please retry")
             return render_template("projects.html")  # send them back to "home"
@@ -480,11 +488,19 @@ NOTE:   Concern here is that deleting a user associated projects will leave "bro
 """
 @app.route("/user_delete/<user_id>")
 def user_delete(user_id):
+    self_delete = False
     try:
+        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if user["user_name"] == session.get("ACTIVE_USER"):
+            self_delete = True 
         mongo.db.users.remove({"_id": ObjectId(user_id)})
     except: 
             flash("Error accessing the database.  Please retry")
             return render_template("projects.html")  # send them back to "home"
+    # if the user whacked themselves, go set a new one
+    if self_delete == True:
+        flash("Self Deleted - You must now select a user name")
+        return redirect(url_for("user_select"))
 
     flash("User Deleted")
     return redirect(url_for("get_users"))
@@ -525,7 +541,9 @@ def user_set(user_name):
     # set the admin status of the user 
     if session.get("ACTIVE_ADMIN") is not None:
         session.pop("ACTIVE_ADMIN")
+        
     session["ACTIVE_ADMIN"] = new_user["user_admin"]
+
 
     flash_message =("User: ", user_name,  "is now active.")
     flash(flash_message)
@@ -550,13 +568,20 @@ def user_add():
             flash("User name already exists.  Please try a new one")
             return redirect(url_for("get_users"))
         
-        # If this is the first user added after account creation, 
+        # If this is the **first** user added after account creation, 
         # make this user an admin
+        # Note: "on" or "off" are only used for the switch
+        user_admin = "off"
+
         if users_exist == 0:
-            user_admin = True
-        else:
-            user_admin = False
-        user_data = {    # dictionary for insert
+            user_admin = "on"  
+            session["ACTIVE_ADMIN"] = True
+
+        # check to see if this is an admin requesting to anoint another one
+        elif session["ACTIVE_ADMIN"] == True:
+            user_admin = True if request.form.get("user_admin") == "on" else False
+       
+        user_data = {    # dictionary for insert 
             "account_name": account_name,
             "password": "",
             "user_type": "user",
@@ -573,10 +598,10 @@ def user_add():
         flash("New user Added")
 
         # if the initial user count was 0, this user can be set as the active user in session
-        # Also add the  fact that they are an admin 
+       
         if users_exist == 0:
             session["ACTIVE_USER"] = request.form.get("user_name").lower()
-            session["ACTIVE_ADMIN"] = user_admin
+        
 
         return redirect(url_for("get_users"))
 
