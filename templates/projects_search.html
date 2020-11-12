@@ -1,7 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>Project Search</h3>
+<h5 class="light-blue-text text-darken-4 center-align">Project Seatch</h5>
 
+
+<div class="row card-panel grey lighten-5">
+
+    <form class="col s12" method="POST" action="{{ url_for('projects_search')}} ">
+        <!--    Submit button -->
+        <div class="row">
+            <div class="col s12 center-align">
+                <button type="submit" class="btn-large light-blue darken-1 text-shadow waves-effect waves-light">
+                    Search <i class="fas fa-search right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!--    Category name    -->
+        <div class="row">
+            <div class="input-field col s12">
+                <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
+                <select multiple id="project_category_name" name="project_category_name" class="validate" required>
+                    <option value="" disabled selected>Choose Category</option>
+                    <option value="ALL">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}">{{ category}}</option>
+                    {% endfor %}
+                </select>
+                <label>Project Category</label>
+            </div>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

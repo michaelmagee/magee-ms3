@@ -168,9 +168,27 @@ def project_edit(project_id):
 
 
 
-@app.route("/projects_search")
+@app.route("/projects_search", methods=["GET", "POST"])
 def projects_search():
-    return render_template("projects_search.html")
+    if request.method == "POST":
+        project_category_name = request.form.get("project_category_name")
+
+        return  render_template("projects_search.html")
+            
+    # else it's a get
+    # get ALL project categories (the categorys might have been renamed )  based on existing values.
+    # note that I could have done a mass project update, or used the CategoryID in the project
+    # But I'm just trying to use mongo one bite at a time here 
+    try:
+        
+        all_categories = mongo.db.projects.distinct("project_category_name", {"project_account_name" : "magee"})
+        return render_template("projects_search.html", categories=all_categories)
+        # priorities=priorities, points=points, hours=hours)
+
+    except:
+        flash("Error accessing the database.  Please retry")
+        return redirect(url_for("get_projects"))  # send them back to "home"
+
 
 
 """                 ===      CATEGORY related code  ===
