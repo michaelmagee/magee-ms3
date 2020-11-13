@@ -167,7 +167,8 @@ def project_edit(project_id):
         return render_template("projects.html")  # send them back to "home"
 
 
-
+# I was unable to effectively get the Materialize multi select component to return a 
+# list/group of multiply selected items, so this search function / utility will be [postponed]
 @app.route("/projects_search", methods=["GET", "POST"])
 def projects_search():
     if request.method == "POST":
@@ -182,7 +183,8 @@ def projects_search():
     try:
         
         all_categories = mongo.db.projects.distinct("project_category_name", {"project_account_name" : "magee"})
-        return render_template("projects_search.html", categories=all_categories)
+        all_statuses = mongo.db.projects.distinct("project_status", {"project_account_name" : "magee"})
+        return render_template("projects_search.html", categories=all_categories, statuses=all_statuses)
         # priorities=priorities, points=points, hours=hours)
 
     except:
