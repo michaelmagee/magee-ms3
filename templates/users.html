@@ -2,14 +2,11 @@
 {% block content %}
 
 
-<h3 class="light-blue-text text-darken-4 center-align">Manage Users</h3>
-<p>   MIKE Describe and style information about what a user is used for here</p>
+<h3 class="light-blue-text text-darken-4 center-align">Select and Manage Users</h3>
+<p>   Admins can manage users.  Non-Admins can select the user that they are. </p>
 
 <div class="row">
     <div class="col s12 center-align">
-        <a href="{{ url_for('user_select') }}" class="btn-large light-green darken-2 text-shadow">
-            Select User <i class="fas fa-plus-square right"></i>
-        </a>
         {% if session.ACTIVE_ADMIN %}
         <a href="{{ url_for('user_add') }}" class="btn-large light-blue darken-2 text-shadow">
             Add User <i class="fas fa-plus-square right"></i>
@@ -28,9 +25,10 @@
                     <p>{{ user.user_notes }}</p>
                 </div>
                 <div class="card-action">
+                    <a href="{{ url_for('user_set', user_name=user.user_name) }}" class="btn-small green accent-4 user_buttons">Select</a>
                     {% if session.ACTIVE_ADMIN %}
-                    <a href="{{ url_for('user_edit', user_id=user._id) }}" class="btn green accent-4">Edit</a>
-                    <a href="{{ url_for('user_delete', user_id=user._id) }}" class="btn grey lighten-1">Delete</a>
+                    <a href="{{ url_for('user_edit', user_id=user._id) }}" class="btn-small light-blue lighten-1 user_buttons">Edit</a>
+                    <a href="{{ url_for('user_delete', user_id=user._id) }}" class="btn-small red darken-1 user_buttons">Delete</a>
                     {% endif %}
                 </div>
             </div>

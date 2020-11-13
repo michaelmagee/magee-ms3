@@ -5,3 +5,8 @@ Magee Milestone3 Styling
 body {
     background-color: light-blue;
 }
+
+.user_buttons {
+    margin-top: 3px;
+    margin-right: 2px;
+}

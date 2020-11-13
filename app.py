@@ -38,11 +38,11 @@ points = [1,5,10,15,20,25]
 @app.route("/")
 def get_projects():
     if session.get("ACCOUNT") is None:
-        flash("You must register or login first")
+        flash("Please register or login first")
         return redirect(url_for("login"))
 
     if session.get("ACTIVE_USER") is None:
-        flash("You must select your user name")
+        flash("Please select your user name")
         return redirect(url_for("user_select"))
     try:
         projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
@@ -564,10 +564,7 @@ def user_set(user_name):
         
     session["ACTIVE_ADMIN"] = new_user["user_admin"]
 
-
-    flash_message =("User: ", user_name,  "is now active.")
-    flash(flash_message)
-    
+    flash(user_name + "  is now active.")
     return redirect(url_for("get_projects"))
 
 @app.route("/user_add", methods=["GET", "POST"])
