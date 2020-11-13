@@ -2,7 +2,7 @@
 {% block content %}
 
 
-<h3 class="center-align">Register Account</h3>
+<h3 class="center-align">Register Family Account</h3>
 <div class="row">
     <form class="col s12 m8 offset-m2" method="POST" action="{{ url_for('register') }}">
         <div class="card-panel">
@@ -11,7 +11,8 @@
                 <div class="input-field col s12">
                     <i class="fas fa-user-plus prefix light-blue-text text-darken-4"></i>
                     <input id="account_name" name="account_name" type="text" minlength="5" maxlength="15" pattern="^[a-zA-Z0-9]{5,15}$" class="validate" required>
-                    <label for="account_name">account_name</label>
+                    <label for="account_name">Family Account Name</label>
+                    <p>Between 5 and 15 Alpha and numbers, no special characters or spaces</p>
                 </div>
             </div>
             <!-- password -->
@@ -22,6 +23,7 @@
                     onchange="this.setCustomValidity(this.validity.patternMismatch ? 'Must have at least 5 characters' : ''); 
                     if(this.checkValidity()) form.password_two.pattern = this.value;" required>
                     <label for="password">Password</label>
+                    <p>Between 5 and 15 Alpha and numbers, no special characters or spaces</p>
                 </div>
             </div>
             <!-- password -->

@@ -172,7 +172,7 @@ def project_edit(project_id):
 @app.route("/projects_search", methods=["GET", "POST"])
 def projects_search():
     if request.method == "POST":
-        project_category_name = request.form.get("project_category_name")
+        # project_category_name = request.form.get("project_category_name")
 
         return  render_template("projects_search.html")
             
@@ -315,14 +315,6 @@ def category_delete(category_id):
 
 
 
-"""                 ===      PREFERENCE related code  (TBD)===    """
-
-# MIKE REMOVE IF NOT USED 
-@app.route("/get_preferences")
-def get_preferences():
-    return render_template("preferences_tbd.html")
-
-
 """                 ===      REGISTER/ LOGIN / LOGOUT related code  ===    """
 
 
@@ -455,7 +447,6 @@ def get_users():
         return redirect(url_for("login"))
 
     if session.get("ACTIVE_USER") is None:
-        flash("You must select a user name")
         return redirect(url_for("user_select"))
     # get users
     try:
@@ -481,7 +472,16 @@ def user_edit(user_id):
         try:
         # If this is an admin, respect the admin switch, else no
             user_admin = True if request.form.get("user_admin") == "on" else False
-            if session["ACTIVE_ADMIN"] == True: 
+            if session["ACTIVE_ADMIN"] == True:
+                # Make sure that the last admin is not turned off.
+                # Get a count and make sure it's at least 1 
+                admin_count = mongo.db.users.find( { "user_type": "user", "user_admin": True, "account_name": session.get("ACCOUNT")}).count()
+                if admin_count <= 1 and request.form.get("user_admin") != "on":  # should never be 0, but just in case
+                    # We know it's an admin doing this, and that admin is the only one, 
+                    # so force admin to stay true
+                    user_admin = True 
+                    flash("Unable to remove admin role from only remaining admin.")
+
                 mongo.db.users.update( {'_id': ObjectId(user_id)},   
                 {"$set": {'user_name': request.form.get('user_name'),
                     "user_notes": request.form.get('user_notes'), 
@@ -519,7 +519,7 @@ def user_delete(user_id):
             return render_template("projects.html")  # send them back to "home"
     # if the user whacked themselves, go set a new one
     if self_delete == True:
-        flash("Self Deleted - You must now select a user name")
+        flash("Self Deleted - You must now select a new user name")
         return redirect(url_for("user_select"))
 
     flash("User Deleted")
@@ -591,10 +591,10 @@ def user_add():
         # If this is the **first** user added after account creation, 
         # make this user an admin
         # Note: "on" or "off" are only used for the switch
-        user_admin = "off"
+        user_admin = False
 
         if users_exist == 0:
-            user_admin = "on"  
+            user_admin = True 
             session["ACTIVE_ADMIN"] = True
 
         # check to see if this is an admin requesting to anoint another one
