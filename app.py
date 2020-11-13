@@ -8,7 +8,7 @@ TO DO:
 
 import os
 from flask import (Flask, render_template, redirect, request, url_for,
-                   flash, session)
+                   flash, session, abort)
 from datetime import date
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId  # converts object ids
@@ -36,7 +36,9 @@ points = [1,5,10,15,20,25]
 
 
 @app.route("/")
-def get_projects():
+@app.route("/<status>")
+def get_projects(status=''):
+
     if session.get("ACCOUNT") is None:
         flash("Please register or login first")
         return redirect(url_for("login"))
@@ -45,17 +47,34 @@ def get_projects():
         flash("Please select your user name")
         return redirect(url_for("user_select"))
     try:
-        projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
-        # pass along project counts  Probably a better way to do this via some aggregation or something
+                # pass along project counts  Probably a better way to do this via some aggregation or something
         status_counts = {}
         status_counts["closed"] = mongo.db.projects.find({"project_status":"closed",  "project_account_name": session["ACCOUNT"]} ).count()
         status_counts["new"] = mongo.db.projects.find({"project_status":"new",  "project_account_name": session["ACCOUNT"]} ).count()
         status_counts["open"] = mongo.db.projects.find({"project_status":"open",  "project_account_name": session["ACCOUNT"]} ).count()
 
-        return render_template("projects.html", projects=projects, status_counts=status_counts)
+    
+        if status == '':
+            # show all open and new but hide the closed ones
+            projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
+
+        elif status == "closed":
+           projects = list(mongo.db.projects.find({"project_status": "closed",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        elif status == "open":
+            projects = list(mongo.db.projects.find({"project_status": "open",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        elif status == "new": 
+            projects = list(mongo.db.projects.find({"project_status": "new",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        else:
+            flash("Boom")
+            abort(404)        
+
+        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=status)
     except:
         flash("Error accessing the database.  Please retry")
-        return render_template("projects.html")  # send them back to "home"
+        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=status)
 
 @app.route("/project_add", methods=["GET", "POST"])
 def project_add():
@@ -95,8 +114,9 @@ def project_add():
     
     return render_template("project_add.html", categories=all_categories, priorities=priorities, points=points, hours=hours)
 
-# change status to closed
 
+
+# change status to closed
 @app.route("/project_close/<project_id>")
 def project_close(project_id):
     try:
@@ -165,6 +185,21 @@ def project_edit(project_id):
     except:
         flash("Error accessing the database.  Please retry")
         return render_template("projects.html")  # send them back to "home"
+
+@app.route("/project_view/<project_id>", methods=["GET", "POST"])
+def project_view(project_id):
+    if request.method == "POST":
+        return redirect(url_for("get_projects"))
+
+    # else it's a get
+    # get the project and the categories necessary and pass to the project_edit.html
+    try:
+        project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+        return render_template("project_view.html", project=project)
+    except:
+        flash("Error accessing the database.  Please retry")
+        return render_template("projects.html")  # send them back to "home"
+
 
 
 # I was unable to effectively get the Materialize multi select component to return a 

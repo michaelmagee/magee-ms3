@@ -2,7 +2,13 @@
 {% block content %}
 
 <h4 class="light-blue-text text-darken-4 center-align">
-    Projects: New({{status_counts["new"]}}) - Open({{status_counts["open"]}}) - Closed({{status_counts["closed"]}})</h4>
+    <!-- allow user to drill into ALL, New, Open or Closed projects -->
+    {% if status_type == "" %}  {% endif %} {{ status_type | upper }}
+    <a href="{{ url_for('get_projects', status='') }}"> Projects:</a> 
+    <a href="{{ url_for('get_projects', status='new') }}" >New</a> ({{status_counts["new"]}}) - 
+    <a href="{{ url_for('get_projects', status='open') }}" >Open</a> ({{status_counts["open"]}}) - 
+    <a href="{{ url_for('get_projects', status='closed') }}" >Closed</a> ({{status_counts["closed"]}})
+</h4>
 
 <ul class="collapsible">
     {% for project in projects %}
@@ -10,12 +16,22 @@
         <div class="collapsible-header white-text light-blue darken-4 text-shadow">
             <div class="col s4">
                 <i class="fasfa-caret-down"></i>
-                <!--  hide these buttons if it's not a good user -->
-                {% if project.project_status != "open" %}
-                    <a href="{{ url_for('project_open', project_id=project._id ) }}" class="btn-small green accent-4">Start</a>
-                {% endif %}   
+                <!--  hide these buttons depending on context -->
+                {% if project.project_status == "closed" %}
+                    <a href="{{ url_for('project_view', project_id=project._id ) }}" class="btn-small light-blue lighten-1">View</a>
+                {% endif %}  
+
+                {% if project.project_status == "open" %}
                     <a href="{{ url_for('project_edit', project_id=project._id ) }}" class="btn-small light-blue lighten-1">Edit</a>
                     <a href="{{ url_for('project_close', project_id=project._id ) }}" class="btn-small grey darken-1">Close</a>
+                {% endif %}  
+
+                {% if project.project_status == "new" %}
+                    <a href="{{ url_for('project_open', project_id=project._id ) }}" class="btn-small green accent-4">Start</a>
+                    <a href="{{ url_for('project_edit', project_id=project._id ) }}" class="btn-small light-blue lighten-1">Edit</a>
+                    <a href="{{ url_for('project_close', project_id=project._id ) }}" class="btn-small grey darken-1">Close</a>
+                {% endif %} 
+
             </div>
             <div class="col s8">
                 <strong> - {{ project.project_name }}</strong> : {{ project.project_due_date }}
@@ -26,7 +42,7 @@
                 {% if project.project_status == "open" %}
                 <i class="fas fa-cog fa-spin fa-3x fa-fw light-green-text text-lighten-2 tooltipped" data-position="left"
                     data-tooltip="Opened"></i>
-                <strong>Opened by:</strong> {{ project.project_opened_by }}
+                <strong>Started by:</strong> {{ project.project_opened_by }}
                 {% endif %}
             </div>
 
