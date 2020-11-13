@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-
+<h5 class="light-blue-text text-darken-4 center-align">
+    User : {% if session.ACTIVE_USER %}  {{ session.ACTIVE_USER }}{% endif %}</a>
+</h5>
 <h4 class="light-blue-text text-darken-4 center-align">
     <!-- allow user to drill into ALL, New, Open or Closed projects -->
     {% if status_type == "" %}  {% endif %} {{ status_type | upper }}

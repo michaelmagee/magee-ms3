@@ -3,6 +3,9 @@
 
 
 <h3 class="light-blue-text text-darken-4 center-align">Select and Manage Users</h3>
+<h5 class="light-blue-text text-darken-4 center-align">
+    User : {% if session.ACTIVE_USER %}  {{ session.ACTIVE_USER }}{% endif %}</a>
+</h5>
 <p>   Admins can manage users.  Non-Admins can select the user that they are. </p>
 
 <div class="row">
