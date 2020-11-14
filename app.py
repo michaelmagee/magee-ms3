@@ -27,17 +27,17 @@ app.secret_key = os.getenv("MS3_SECRET_KEY")
 mongo = PyMongo(app)
 
 # Common values for dropdowns
-hours = [1,2,3,4,5,6,7,8,9,10]
-priorities = [1,2,3,4,5,6,7,8,9,10]
-points = [1,5,10,15,20,25]
+HOURS = [1,2,3,4,5,6,7,8,9,10]
+PRIORITIES = [1,2,3,4,5,6,7,8,9,10]
+POINTS = [1,5,10,15,20,25]
 
 
 """                 ===      PROJECT (Home) related code  ===    """
 
 
 @app.route("/")
-@app.route("/<status>")
-def get_projects(status=''):
+@app.route("/<project_state>")
+def get_projects(project_state=''):
 
     if session.get("ACCOUNT") is None:
         flash("Please register or login first")
@@ -53,28 +53,25 @@ def get_projects(status=''):
         status_counts["new"] = mongo.db.projects.find({"project_status":"new",  "project_account_name": session["ACCOUNT"]} ).count()
         status_counts["open"] = mongo.db.projects.find({"project_status":"open",  "project_account_name": session["ACCOUNT"]} ).count()
 
-    
-        if status == '':
+        # determine of view is filtered by state
+        if project_state == "closed":
+           projects = list(mongo.db.projects.find({"project_status": "closed",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        elif project_state == "open":
+            projects = list(mongo.db.projects.find({"project_status": "open",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        elif project_state == "new": 
+            projects = list(mongo.db.projects.find({"project_status": "new",  "project_account_name": session["ACCOUNT"]} ) ) 
+
+        else: 
             # show all open and new but hide the closed ones
             projects = list(mongo.db.projects.find({"project_status":{"$ne":"closed"},  "project_account_name": session["ACCOUNT"]} ) )
 
-        elif status == "closed":
-           projects = list(mongo.db.projects.find({"project_status": "closed",  "project_account_name": session["ACCOUNT"]} ) ) 
-
-        elif status == "open":
-            projects = list(mongo.db.projects.find({"project_status": "open",  "project_account_name": session["ACCOUNT"]} ) ) 
-
-        elif status == "new": 
-            projects = list(mongo.db.projects.find({"project_status": "new",  "project_account_name": session["ACCOUNT"]} ) ) 
-
-        else:
-            flash("Boom")
-            abort(404)        
-
-        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=status)
+        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=project_state)
+        
     except:
         flash("Error accessing the database.  Please retry")
-        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=status)
+        return render_template("projects.html", projects=projects, status_counts=status_counts, status_type=project_state)
 
 @app.route("/project_add", methods=["GET", "POST"])
 def project_add():
@@ -112,7 +109,7 @@ def project_add():
     all_categories = list(mongo.db.categories.find({"account_name": session.get("ACCOUNT")}).sort(
         "category_name", 1))  # sort ascending
     
-    return render_template("project_add.html", categories=all_categories, priorities=priorities, points=points, hours=hours)
+    return render_template("project_add.html", categories=all_categories, priorities=PRIORITIES, points=POINTS, hours=HOURS)
 
 
 
@@ -181,7 +178,7 @@ def project_edit(project_id):
         all_categories = list(mongo.db.categories.find({"account_name": session.get("ACCOUNT")}).sort(
             "category_name", 1))  # sort ascending
         return render_template("project_edit.html", project=project, categories=all_categories, 
-            priorities=priorities, points=points, hours=hours)
+            priorities=PRIORITIES, points=POINTS, hours=HOURS)
     except:
         flash("Error accessing the database.  Please retry")
         return render_template("projects.html")  # send them back to "home"
@@ -220,7 +217,6 @@ def projects_search():
         all_categories = mongo.db.projects.distinct("project_category_name", {"project_account_name" : "magee"})
         all_statuses = mongo.db.projects.distinct("project_status", {"project_account_name" : "magee"})
         return render_template("projects_search.html", categories=all_categories, statuses=all_statuses)
-        # priorities=priorities, points=points, hours=hours)
 
     except:
         flash("Error accessing the database.  Please retry")
@@ -600,7 +596,7 @@ def user_set(user_name):
     session["ACTIVE_ADMIN"] = new_user["user_admin"]
 
     flash(user_name + "  is now active.")
-    return redirect(url_for("get_projects"))
+    return redirect(url_for("get_projects", project_state=''))
 
 @app.route("/user_add", methods=["GET", "POST"])
 def user_add():
