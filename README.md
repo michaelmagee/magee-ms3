@@ -1,5 +1,10 @@
 # Mike Magee - Code Institute Milestone 3  Honey-Do app 
 
+Mike: Discuss: 
+    DeprecationWarning: count is deprecated. Use Collection.count_documents instead.
+    continuation line under-indented for visual indent
+
+
 
 The requirement of this project is to "... build a full-stack site that allows your users to manage a common dataset about a particular domain."
 
