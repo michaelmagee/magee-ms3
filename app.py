@@ -33,7 +33,7 @@ POINTS = [1, 5, 10, 15, 20, 25]
 
 @app.route("/")
 @app.route("/<project_state>")
-def get_projects(project_state=''):
+def get_projects(project_state=""):
 
     if session.get("ACCOUNT") is None:
         flash("Please register or login first")
@@ -298,19 +298,19 @@ def get_categories():
         # Get all of the totals for various categories
         category_project_count_closed = mongo.db.projects.find(
                             {"project_status": "closed",
-                             "project_category_name": cat['category_name'],
+                             "project_category_name": cat["category_name"],
                              "project_account_name":
                                 session["ACCOUNT"]}).count()
 
         category_project_count_open = mongo.db.projects.find(
                             {"project_status": "open",
-                             "project_category_name": cat['category_name'],
+                             "project_category_name": cat["category_name"],
                              "project_account_name":
                                 session["ACCOUNT"]}).count()
 
         category_project_count_new = mongo.db.projects.find(
                             {"project_status": "new",
-                             "project_category_name": cat['category_name'],
+                             "project_category_name": cat["category_name"],
                              "project_account_name":
                                 session["ACCOUNT"]}).count()
 
@@ -378,7 +378,7 @@ def category_edit(category_id):
         try:
             # retain non displayed values,
             # note: uspsert appears to default to false in the doc
-            mongo.db.categories.update({'_id': ObjectId(category_id)},
+            mongo.db.categories.update({"_id": ObjectId(category_id)},
                                        {"$set":
                                        {"category_name":
                                         request.form.get("category_name"),
@@ -605,7 +605,7 @@ def user_edit(user_id):
             if request.form.get("user_admin") == "on":
                 user_admin = True
 
-            if session.get('ACTIVE_ADMIN') is not None:
+            if session.get("ACTIVE_ADMIN") is not None:
                 # Make sure that the last admin is not turned off.
                 # Get a count and make sure it's at least 1
                 admin_count = mongo.db.users.find(
@@ -768,7 +768,7 @@ def user_add():
             session["ACTIVE_ADMIN"] = True
 
         # See if this is an admin requesting to anoint another one
-        elif session.get('ACTIVE_ADMIN') is not None:
+        elif session.get("ACTIVE_ADMIN") is not None:
             user_admin = False
             if request.form.get("user_admin") == "on":
                 user_admin = True
@@ -803,20 +803,20 @@ def user_add():
     Select the correct environment
 """
 if environment == "flask":
-    if __name__ == '__main__':
+    if __name__ == "__main__":
         app.run(use_debugger=False, use_reloader=False,
                 passthrough_errors=True)
 
 elif environment == "vscode":
-    if __name__ == '__main__':
+    if __name__ == "__main__":
         app.run(use_debugger=True, use_reloader=False,
                 passthrough_errors=True)
 
 
 elif environment == "heroku":
-    if __name__ == '__main__':
-        app.run(host=os.environ.get('IP', "0.0.0.0"),
-                port=int(os.environ.get('PORT', "5000")),
+    if __name__ == "__main__":
+        app.run(host=os.environ.get("IP", "0.0.0.0"),
+                port=int(os.environ.get("PORT", "5000")),
                 debug=False)
 
 else:
