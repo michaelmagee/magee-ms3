@@ -7,6 +7,7 @@ from flask import (Flask, render_template, redirect, request, url_for,
                    flash, session, abort)
 from datetime import date
 from flask_pymongo import PyMongo
+import pymongo
 from bson.objectid import ObjectId  # converts object ids
 import bcrypt
 
@@ -26,8 +27,20 @@ mongo = PyMongo(app)
 HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 PRIORITIES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 POINTS = [1, 5, 10, 15, 20, 25]
-POPS = [1, 3, 5]    # limit number of popped projects
 
+# used in Pop A Project
+POPS = [1, 3, 5]    # limit number of popped projects
+SORT_TYPES = [{"sort_type": "pymongo.DESCENDING",
+               "display_name": "Descending"},
+              {"sort_type": "pymongo.ASCENDING",
+               "display_name": "Ascending"}]
+
+SORT_FIELDS = [{"field_name": "project_points",
+                "display_name": "Project Points"},
+               {"field_name": "project_priority",
+                "display_name": "Project Priority"},
+               {"field_name": "project_hour_estimate",
+                "display_name": "Project Duration Estimate"}]
 
 """                 ===      PROJECT (Home) related code  ===    """
 
@@ -124,7 +137,7 @@ def project_add():
         try:
 
             mongo.db.projects.insert_one(new_project)
-            flash("Task Added")
+            flash("Project Added")
             return redirect(url_for("get_projects"))
         except:
             flash("Error accessing the database.  Please retry")
@@ -143,44 +156,60 @@ def project_add():
 # "Pop" (help me select a project)
 @app.route("/project_pop", methods=["GET", "POST"])
 def project_pop():
-    """
-    Digest the request, gather the projects and send to get
     if request.method == "POST":
-        project_is_urgent = \
-            "on" if request.form.get("project_is_urgent") else "off"
-        new_project = {
-            "project_category_name": request.form.get("project_category_name"),
-            "project_name": request.form.get("project_name"),
-            "project_description": request.form.get("project_description"),
-            "project_due_date": request.form.get("project_due_date"),
-            "project_is_urgent": project_is_urgent,
-            "project_status": "new",
-            "project_priority": request.form.get("project_priority", type=int),
-            "project_points": request.form.get("project_points", type=int),
-            "project_hour_estimate": request.form.get(
-                            "project_hour_estimate", type=int),
-            "project_date_created": date.today().strftime("%d %B, %Y"),
-            "project_created_by": session["ACTIVE_USER"],
-            "project_account_name": session["ACCOUNT"],
-            "project_date_opened": "",
-            "project_opened_by": "",
-            "project_date_closed": "",
-            "project_closed_by": ""
+        flash("Processing Pops :" + request.form.get("pops_requested"))
 
-        }
         try:
+            # pass along project counts  Probably a better way to do this
+            # via some aggregation or something
+            status_counts = {}
+            status_counts["closed"] = mongo.db.projects.find(
+                    {"project_status": "closed",
+                        "project_account_name": session["ACCOUNT"]}).count()
 
-            mongo.db.projects.insert_one(new_project)
-            flash("Task Added")
-            return redirect(url_for("get_projects"))
+            status_counts["new"] = \
+                mongo.db.projects.find(
+                                        {"project_status": "new",
+                                         "project_account_name":
+                                         session["ACCOUNT"]}).count()
+
+            status_counts["open"] = mongo.db.projects.find(
+                    {"project_status": "open",
+                        "project_account_name": session["ACCOUNT"]}).count()
+
+            # send totals in as well
+            status_counts["total"] = (status_counts["open"] +
+                                      status_counts["new"])
+
+            # ONLY show the new projects
+            query = {"project_account_name": session["ACCOUNT"],
+                     "project_status": "new"}
+            sort_field = request.form.get("sort_requested")
+            xsort_direction = request.form.get("xsort_direction")
+            pops_requested = request.form.get("pops_requested", type=int)
+            sort_direction = pymongo.DESCENDING
+            if xsort_direction == "pymongo.ASCENDING":
+                sort_direction = pymongo.ASCENDING
+
+            projects = list(mongo.db.projects.find(query).
+                            sort(sort_field, sort_direction).
+                            limit(pops_requested))
+
+            return render_template("projects.html",
+                                   projects=projects,
+                                   status_counts=status_counts,
+                                   status_type="popped")
+
         except:
             flash("Error accessing the database.  Please retry")
-            return render_template("projects.html")  # send them back to "home"
-"""
+            return render_template("projects.html", projects=projects,
+                                   status_counts=status_counts,
+                                   status_type="popped")
+
     # else it's a get - render the page
-    return render_template("project_pop.html", categories=all_categories,
-                           priorities=PRIORITIES, points=POINTS,
-                           hours=HOURS)
+    return render_template("pop_a_project.html", pops=POPS,
+                           sort_types=SORT_TYPES,
+                           sort_fields=SORT_FIELDS)
 
 
 # change status to closed
