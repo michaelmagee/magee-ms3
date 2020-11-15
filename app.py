@@ -193,18 +193,27 @@ def project_edit(project_id):
         project_is_urgent = \
             "on" if request.form.get("project_is_urgent") else "off"
         try:
-            mongo.db.projects.find_one_and_update(
+            p = mongo.db.projects
+            p.find_one_and_update(
                 {"_id": ObjectId(project_id)},
                 {"$set":
-                # Long lines but easier to read!
-                {"project_category_name": request.form.get("project_category_name"),
-                 "project_name": request.form.get("project_name"),
-                 "project_description": request.form.get("project_description"),
-                 "project_due_date": request.form.get("project_due_date"),
-                 "project_is_urgent": project_is_urgent,
-                 "project_priority": request.form.get("project_priority", type=int),
-                 "project_points": request.form.get("project_points", type=int),
-                 "project_hour_estimate": request.form.get("project_hour_estimate", type=int)}})
+                    # Easier to read on one line but PEP8 says NO!
+                    {"project_category_name":
+                        request.form.get("project_category_name"),
+                     "project_name":
+                        request.form.get("project_name"),
+                     "project_description":
+                        request.form.get("project_description"),
+                     "project_due_date":
+                        request.form.get("project_due_date"),
+                     "project_is_urgent":
+                        project_is_urgent,
+                     "project_priority":
+                        request.form.get("project_priority", type=int),
+                     "project_points":
+                        request.form.get("project_points", type=int),
+                     "project_hour_estimate":
+                        request.form.get("project_hour_estimate", type=int)}})
 
             flash("Project Updated")
             return redirect(url_for("get_projects"))
@@ -596,7 +605,7 @@ def user_edit(user_id):
             if request.form.get("user_admin") == "on":
                 user_admin = True
 
-            if session["ACTIVE_ADMIN"] == True:
+            if session.get('ACTIVE_ADMIN') is not None:
                 # Make sure that the last admin is not turned off.
                 # Get a count and make sure it's at least 1
                 admin_count = mongo.db.users.find(
@@ -617,6 +626,16 @@ def user_edit(user_id):
                             {"user_name": request.form.get("user_name"),
                              "user_notes": request.form.get("user_notes"),
                              "user_admin": user_admin}})
+
+                # FINALLY, if user is active and removed their own admin priv,
+                # remove the fact that they are an admin by popping it off
+                # the session Note user/active user set this way to make PEP8
+                # happy.
+                user = request.form.get("user_name")
+                active_user = session.get("ACTIVE_USER")
+                if (user == active_user and user_admin is False):
+                    session.pop("ACTIVE_ADMIN")
+
             else:
                 mongo.db.users.update(
                     {"_id": ObjectId(user_id)},
@@ -640,22 +659,32 @@ NOTE:   Concern here is that deleting a user associated projects
 """
 
 
-# Delete User
+# Delete User, but not if it's the last admin
 @app.route("/user_delete/<user_id>")
 def user_delete(user_id):
-    self_delete = False
     try:
         user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
         if user["user_name"] == session.get("ACTIVE_USER"):
-            self_delete = True
-        mongo.db.users.remove({"_id": ObjectId(user_id)})
+            # Make sure that the last admin is not turned off.
+            # Get a count and make sure it's at least 1
+            # remember that I can't be here unless I'm an admin
+            admin_count = mongo.db.users.find(
+                    {"user_type": "user", "user_admin": True,
+                     "account_name": session.get("ACCOUNT")}).count()
+
+            # At this point, we know that I'm deleting myself and
+            # I'm the last admin.  Disallow tghis and return to users
+            if admin_count <= 1:
+                flash("Unable to remove the only known admin. \
+                        Please create another one first.")
+            return redirect(url_for("get_users"))
 
     except:
             flash("Error accessing the database.  Please retry")
             return render_template("projects.html")
 
     # if the user whacked themselves, go set a new one
-    if self_delete == True:
+    if user["user_name"] == session.get("ACTIVE_USER"):
         flash("Self Deleted - You must now select a new user name")
         return redirect(url_for("user_select"))
 
@@ -739,7 +768,7 @@ def user_add():
             session["ACTIVE_ADMIN"] = True
 
         # See if this is an admin requesting to anoint another one
-        elif session["ACTIVE_ADMIN"] == True:
+        elif session.get('ACTIVE_ADMIN') is not None:
             user_admin = False
             if request.form.get("user_admin") == "on":
                 user_admin = True
