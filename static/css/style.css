@@ -11,6 +11,13 @@ body {
     margin-right: 2px;
 }
 
-.logo_left {
+.bump_left_8 {
     margin-left: 8px;
+}
+.bump_right_8 {
+    margin-right: 8px;
+}
+
+.bump_top_4 {
+    margin-top: 4px;
 }

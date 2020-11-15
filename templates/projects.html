@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 <h5 class="light-blue-text text-darken-4 center-align">
-    User : {% if session.ACTIVE_USER %}  {{ session.ACTIVE_USER }}{% endif %}</a>
+    User : {% if session.ACTIVE_USER %} {{ session.ACTIVE_USER }}{% endif %}</a>
 </h5>
 <h4 class="light-blue-text text-darken-4 center-align">
     <!-- allow user to drill into ALL, New, Open or Closed projects -->
-    {% if status_type == "" %}  {% endif %} {{ status_type | upper }}
-    <a href="{{ url_for('get_projects', project_state='') }}"> Projects:</a> 
-    <a href="{{ url_for('get_projects', project_state='new') }}" >New</a> ({{status_counts["new"]}}) - 
-    <a href="{{ url_for('get_projects', project_state='open') }}" >Open</a> ({{status_counts["open"]}}) - 
-    <a href="{{ url_for('get_projects', project_state='closed') }}" >Closed</a> ({{status_counts["closed"]}})
+    {% if status_type == "" %} {% endif %} {{ status_type | upper }}
+    <a href="{{ url_for('get_projects', project_state='') }}"> Projects:</a>
+    <a href="{{ url_for('get_projects', project_state='new') }}">New</a> ({{status_counts["new"]}}) -
+    <a href="{{ url_for('get_projects', project_state='open') }}">Open</a> ({{status_counts["open"]}}) -
+    <a href="{{ url_for('get_projects', project_state='closed') }}">Closed</a> ({{status_counts["closed"]}})
 </h4>
 
+{% if status_counts["total"] != 0 %}
+<!-- if no projects, suggest they add one -->
 <ul class="collapsible">
     {% for project in projects %}
     <li>
@@ -20,39 +22,45 @@
                 <i class="fasfa-caret-down"></i>
                 <!--  hide these buttons depending on context -->
                 {% if project.project_status == "closed" %}
-                    <a href="{{ url_for('project_view', project_id=project._id ) }}" class="btn-small light-blue lighten-1">View</a>
-                {% endif %}  
+                <a href="{{ url_for('project_view', project_id=project._id ) }}"
+                    class="btn-small light-blue lighten-1">View</a>
+                {% endif %}
 
                 {% if project.project_status == "open" %}
-                    <a href="{{ url_for('project_edit', project_id=project._id ) }}" class="btn-small light-blue lighten-1">Edit</a>
-                    <a href="{{ url_for('project_close', project_id=project._id ) }}" class="btn-small grey darken-1">Close</a>
-                {% endif %}  
+                <a href="{{ url_for('project_edit', project_id=project._id ) }}"
+                    class="btn-small light-blue lighten-1">Edit</a>
+                <a href="{{ url_for('project_close', project_id=project._id ) }}"
+                    class="btn-small grey darken-1">Close</a>
+                {% endif %}
 
                 {% if project.project_status == "new" %}
-                    <a href="{{ url_for('project_open', project_id=project._id ) }}" class="btn-small green accent-4">Start</a>
-                    <a href="{{ url_for('project_edit', project_id=project._id ) }}" class="btn-small light-blue lighten-1">Edit</a>
-                    <a href="{{ url_for('project_close', project_id=project._id ) }}" class="btn-small grey darken-1">Close</a>
-                {% endif %} 
+                <a href="{{ url_for('project_open', project_id=project._id ) }}"
+                    class="btn-small green accent-4">Start</a>
+                <a href="{{ url_for('project_edit', project_id=project._id ) }}"
+                    class="btn-small light-blue lighten-1">Edit</a>
+                <a href="{{ url_for('project_close', project_id=project._id ) }}"
+                    class="btn-small grey darken-1">Close</a>
+                {% endif %}
 
             </div>
-            <div class="col s8">
-                <strong> - {{ project.project_name }}</strong> : {{ project.project_due_date }}
+            <div class="col s8 bump_left_8 bump_top_4">
+                <strong>{{ project.project_name }}</strong> : {{ project.project_due_date }}
                 {% if project.project_is_urgent == "on" %}
                 <i class="fas fa-exclamation-circle light-blue-text text-lighten-2 tooltipped" data-position="right"
                     data-tooltip="URGENT"></i>
                 {% endif %}
                 {% if project.project_status == "open" %}
-                <i class="fas fa-cog fa-spin fa-3x fa-fw light-green-text text-lighten-2 tooltipped" data-position="left"
-                    data-tooltip="Opened"></i>
+                <i class="fas fa-cog fa-spin fa-3x fa-fw light-green-text text-lighten-2 tooltipped"
+                    data-position="left" data-tooltip="Opened"></i>
                 <strong>Started by:</strong> {{ project.project_opened_by }}
                 {% endif %}
             </div>
 
         </div>
         <div class="collapsible-body">
-            <p>Created By: {{project.project_created_by}}  On: {{project.project_date_created}} </p>
-            <strong>Category: {{ project.project_category_name }}  Status: {{ project.project_status }}</strong>
-            <strong>Priority: {{ project.project_priority }}  Points: {{ project.project_points }}</strong>
+            <p>Created By: {{project.project_created_by}} On: {{project.project_date_created}} </p>
+            <strong>Category: {{ project.project_category_name }} Status: {{ project.project_status }}</strong>
+            <strong>Priority: {{ project.project_priority }} Points: {{ project.project_points }}</strong>
             <p>{{ project.project_description }}</p>
             <p>Estimated Time Required: {{project.project_hour_estimate}} hours </p>
         </div>
@@ -60,4 +68,12 @@
     {% endfor %}
 </ul>
 
+{% else %}
+    <div class="light-blue-text text-darken-4 center-align">
+        <h4>
+            No projects found yet. </h4>   
+        <h5>Start by adding some here: <a href="{{ url_for('project_add') }} " 
+            class="light-blue-text text-darken-4">Add New Project</a> </h5>
+    </div>
+{% endif %}
 {% endblock %}

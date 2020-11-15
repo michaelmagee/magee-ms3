@@ -26,6 +26,7 @@ mongo = PyMongo(app)
 HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 PRIORITIES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 POINTS = [1, 5, 10, 15, 20, 25]
+POPS = [1, 3, 5]    # limit number of popped projects
 
 
 """                 ===      PROJECT (Home) related code  ===    """
@@ -59,6 +60,9 @@ def get_projects(project_state=""):
         status_counts["open"] = mongo.db.projects.find(
                 {"project_status": "open",
                     "project_account_name": session["ACCOUNT"]}).count()
+
+        # send totals in as well
+        status_counts["total"] = (status_counts["open"] + status_counts["new"])
 
         # determine of view is filtered by state
         if project_state == "closed":
@@ -132,6 +136,49 @@ def project_add():
                         "category_name", 1))  # sort ascending
 
     return render_template("project_add.html", categories=all_categories,
+                           priorities=PRIORITIES, points=POINTS,
+                           hours=HOURS)
+
+
+# "Pop" (help me select a project)
+@app.route("/project_pop", methods=["GET", "POST"])
+def project_pop():
+    """
+    Digest the request, gather the projects and send to get
+    if request.method == "POST":
+        project_is_urgent = \
+            "on" if request.form.get("project_is_urgent") else "off"
+        new_project = {
+            "project_category_name": request.form.get("project_category_name"),
+            "project_name": request.form.get("project_name"),
+            "project_description": request.form.get("project_description"),
+            "project_due_date": request.form.get("project_due_date"),
+            "project_is_urgent": project_is_urgent,
+            "project_status": "new",
+            "project_priority": request.form.get("project_priority", type=int),
+            "project_points": request.form.get("project_points", type=int),
+            "project_hour_estimate": request.form.get(
+                            "project_hour_estimate", type=int),
+            "project_date_created": date.today().strftime("%d %B, %Y"),
+            "project_created_by": session["ACTIVE_USER"],
+            "project_account_name": session["ACCOUNT"],
+            "project_date_opened": "",
+            "project_opened_by": "",
+            "project_date_closed": "",
+            "project_closed_by": ""
+
+        }
+        try:
+
+            mongo.db.projects.insert_one(new_project)
+            flash("Task Added")
+            return redirect(url_for("get_projects"))
+        except:
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")  # send them back to "home"
+"""
+    # else it's a get - render the page
+    return render_template("project_pop.html", categories=all_categories,
                            priorities=PRIORITIES, points=POINTS,
                            hours=HOURS)
 
@@ -240,6 +287,7 @@ def project_edit(project_id):
         return render_template("projects.html")  # send them back to "home"
 
 
+# View closed projects with all fields
 @app.route("/project_view/<project_id>", methods=["GET", "POST"])
 def project_view(project_id):
     if request.method == "POST":
@@ -254,21 +302,6 @@ def project_view(project_id):
     except:
         flash("Error accessing the database.  Please retry")
         return render_template("projects.html")  # send them back to "home"
-
-
-# I was unable to effectively get the Materialize multi select to return a
-# list/group of multiply selected items, search function is [postponed]
-@app.route("/projects_search", methods=["GET", "POST"])
-def projects_search():
-    if request.method == "POST":
-        # project_category_name = request.form.get("project_category_name")
-
-        return render_template("projects_search.html")
-
-    # else it's a get
-
-    return redirect(url_for("get_projects"))  # send them back to "home"
-
 
 """                 ===      CATEGORY related code  ===
 NOTE:   Concern here is that deleting a category associated
@@ -499,6 +532,7 @@ def register():
         return redirect(url_for("get_users",
                                 account_name=session.get("ACCOUNT")))
 
+    # Just a "get", so serve the form
     return render_template("register.html")
 
 
@@ -795,7 +829,7 @@ def user_add():
         if users_exist == 0:
             session["ACTIVE_USER"] = request.form.get("user_name").lower()
 
-        return redirect(url_for("get_users"))
+        return redirect(url_for("get_projects"))
 
     return render_template("user_add.html")
 
