@@ -58,11 +58,11 @@
 
         </div>
         <div class="collapsible-body">
-            <p>Created By: {{project.project_created_by}} On: {{project.project_date_created}} </p>
-            <strong>Category: {{ project.project_category_name }} Status: {{ project.project_status }}</strong>
-            <strong>Priority: {{ project.project_priority }} Points: {{ project.project_points }}</strong>
-            <p>{{ project.project_description }}</p>
-            <p>Estimated Time Required: {{project.project_hour_estimate}} hours </p>
+            <p><strong>Created By:</strong> {{project.project_created_by}} On: {{project.project_date_created}} </p>
+            <strong>Category:</strong> {{ project.project_category_name }} <strong>Status:</strong> {{ project.project_status }}
+            <strong>Priority: </strong> {{ project.project_priority }} <strong>Points:</strong> {{ project.project_points }}
+            <p><strong>Description: </strong>{{ project.project_description }}</p>
+            <p><strong>Estimated Time Required:</strong> {{project.project_hour_estimate}} hours </p>
         </div>
     </li>
     {% endfor %}
@@ -73,7 +73,7 @@
         <h4>
             No projects found yet. </h4>   
         <h5>Start by adding some here: <a href="{{ url_for('project_add') }} " 
-            class="light-blue-text text-darken-4">Add New Project</a> </h5>
+            class="teal-text accent-2">Add New Project</a> </h5>
     </div>
 {% endif %}
 {% endblock %}

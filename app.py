@@ -75,7 +75,9 @@ def get_projects(project_state=""):
                     "project_account_name": session["ACCOUNT"]}).count()
 
         # send totals in as well
-        status_counts["total"] = (status_counts["open"] + status_counts["new"])
+        status_counts["total"] = (status_counts["open"] + 
+                                  status_counts["new"] + 
+                                  status_counts["closed"])
 
         # determine of view is filtered by state
         if project_state == "closed":
