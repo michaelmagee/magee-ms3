@@ -1,8 +1,19 @@
 # Mike Magee - Code Institute Milestone 3  Honey-Do app 
 
 Mike: Discuss: 
-    DeprecationWarning: count is deprecated. Use Collection.count_documents instead.
-    continuation line under-indented for visual indent
+
+
+    HTML Verification
+    Section lacks heading. Consider using “h2”-“h6” elements to add identifying headings to all sections.
+    Attribute “method” not allowed on element “div” at this point.
+        From line 41, column 13 to line 41, column 69
+        Code Extract:
+        <div class="input-field col s12" method="POST" action="">↩
+    The “select” element cannot have more than one selected “option” descendant unless the “multiple” attribute is specified.
+        From line 99, column 21 to line 99, column 50
+        Code Extract:
+        <option value="Home" selected>Home<
+        Came from a Code Institute example 
 
 
 
@@ -17,7 +28,7 @@ The fundamental use case for this first version is:
     - Within this account there are users eg: Dad, Mom, child1 etc.. 
     - Anyone can create a project, assign goals, priority and "reward points" 
     - Anyone can open, complete and earn the award points. 
-    - 
+    - Categories and users can be added and managed
 
 <br>
 ***
@@ -35,6 +46,7 @@ The fundamental use case for this first version is:
 * As a user I expect accessing, opening and closing projects to be simple
 * As a user I expect searching for projects via various criteria to be intuitive
 * As a user I want to be able to observe how many projects are in what state. 
+* As a user I want to be know how many projects are in each category 
 * As a user I want to be able to have the App "Pop" a project off based on criteria.
 
 <br> 
@@ -45,12 +57,20 @@ The fundamental use case for this first version is:
 Hosted app
 The App is published at https://magee-ms3.herokuapp.com
 ***
-Wireframes for usability on different devices
+Wireframes for usability on Desktop 
+Note that because this project was focused on database and CRUD I did not do the wireframes for them, 
+and retroactively for the desktop
 
-- [Initial idea](project/FirstDrawing.png)
-- [Small Device](project/iPhone.png)
-- [Medium Device](project/iPad.png)
-- [Large Device](project/LargescreenDesktop.png)
+- [Initial idea](project/Initial_Drawing.png)
+- [Initial Registration](project/Initial_Drawing.png)
+- [Initial Entry](project/Entry_login_Desktop.png)
+- [Registration](project/Register_Desktop.png)
+- [Add a User](project/add_user_desktop.png)
+- [Initial Home - no projects](project/projects_none_Desktop.png)
+- [Adding a project](project/create_project_desktop.png)
+- [Home with projects](project/Home_desktop.png)
+- [Closed view](project/Closed_readonly_view.png)
+
 
 
 
@@ -76,7 +96,8 @@ Wireframes for usability on different devices
 <br> *** 
 
 ## What I learned 
-- **xxx**: 
+- ** Python coding **: I didn't lint it until the end.  I learned that I should lint before EVERY checkin. 
+- ** Jinja HTML Validation **: A combination of copying the resolved HTML from the browser as well as using the source HTML provided the best results. 
 <br> 
 
 ***
@@ -90,6 +111,8 @@ In this section, you should mention all of the languages, frameworks, libraries,
     - https://www.freeformatter.com/html-validator.html
 - CSS Validation by W3C
     - https://jigsaw.w3.org/css-validator/
+- Python Lint
+    - http://pep8online.com/
 - Development framework Visual Studio Code (mac) by Microsoft v1.50.1
     -https://visualstudio.microsoft.com/vs/mac/
 - Javascript 
@@ -132,6 +155,18 @@ Key to matrix:
 
 ** MJM Include completed testing matrix here 
 
+## Validation
+    HTML Verification
+    Section lacks heading. Consider using “h2”-“h6” elements to add identifying headings to all sections.
+    Attribute “method” not allowed on element “div” at this point.
+        From line 41, column 13 to line 41, column 69
+        Code Extract:
+        <div class="input-field col s12" method="POST" action="">↩
+    The “select” element cannot have more than one selected “option” descendant unless the “multiple” attribute is specified.
+        From line 99, column 21 to line 99, column 50
+        Code Extract:
+        <option value="Home" selected>Home<
+        Came from a Code Institute example 
 
 ## Deployment
 
@@ -179,13 +214,12 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 
 ### Environment 
 - Code Institute student template for Gitpod was used
-- Locally, Visual Studio Code, periodically pushing to Githib/Gitpod
+- Locally, Visual Studio Code, periodically pushing to Github
 
-### Content
-- All text and images are mine.
 
-### Media
--  Fav Icon by https://icons8.com/icons/set/question-mark
+
+### Media & Content
+-  Icons by - https://fontawesome.com/
 
 
 
@@ -193,5 +227,4 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 ### Acknowledgements
 
 - I received inspiration for this project from examples from Code Institute that I played with as I was learning.  
--  
--  
+
