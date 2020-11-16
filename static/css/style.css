@@ -2,15 +2,13 @@
 Magee Milestone3 Styling
 */
 
-body {
-    background-color: light-blue;
-}
-
 .user_buttons {
     margin-top: 3px;
     margin-right: 2px;
 }
 
+/* Minor adjustment to buttons fields that needed it 
+    for alignment or seperation */
 .bump_left_8 {
     margin-left: 8px;
 }

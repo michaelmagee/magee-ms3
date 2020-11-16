@@ -2,140 +2,96 @@
 {% block content %}
 
 <h3 class="light-blue-text text-darken-4 center-align">View Project Details</h3>
+<h5 class="light-blue-text text-darken-4 center-align">Read-only view</h5>
 
 <div class="row card-panel grey lighten-5">
-    <form class="col s12" method="POST" action="{{ url_for('get_projects' )}} ">
-        <!--    Category name    -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
-                <select id="project_category_name" name="project_category_name" class="validate" readonly >
-                    <option value="" disabled selected>Category</option>
-                    {% for category in categories %}
-                    <!-- Indicate selected when the category name in the collection
-                         matches the task's category name. Cool, thanks Code institute for sharing
-                         This is used for Category, points & priority
-                    -->
-                    {% if category.category_name == project.project_category_name %}
-                    <option value="{{ category.category_name }}" selected>{{ category.category_name }} readonly</option>
-                    {% else %}
-                    <option value="{{ category.category_name }}">{{ category.category_name }} readonly </option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-                <label>Project Category</label>
-            </div>
-        </div>
-        <!--    Project Name    -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-pencil-alt prefix light-blue-text text-darken-4"></i>
-                <input id="project_name" name="project_name" minlength="5" maxlength="50" type="text" class="validate"
-                    value="{{ project.project_name }}" readonly>
-                <label for="project_name">Project Name</label>
-            </div>
-        </div>
-        <!--    Project Description   -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-align-left prefix light-blue-text text-darken-4"></i>
-                <textarea id="project_description" name="project_description" minlength="5" maxlength="200"
-                    class="materialize-textarea" required>{{ project.project_name }} readonly</textarea>
-                <label for="project_description">Project Description</label>
-            </div>
-        </div>
-        <!--    Due Date Selection  -->
-        <div class="row">
-            <div class="input-field col s12" method="POST" action="">
-                <i class="fas fa-calendar-alt prefix light-blue-text text-darken-4"></i>
-                <input id="project_due_date" name="project_due_date" type="text" class="validate datepicker"
-                    value="{{ project.project_due_date }}" readonly>
-                <label for="project_due_date">Due Date</label>
-            </div>
-        </div>
+    <table class="striped ">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
 
-        <!--    priority assigned    -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-thermometer-half prefix light-blue-text text-darken-4"></i>
-                <select id="project_priority" name="project_priority" class="validate" readonly>
-                    <option value="" disabled selected>Select Priority</option>
-                    {% for priority in priorities %}
-                        {% if priority == project.project_priority %}
-                            <option value="{{ priority }}" selected>{{ priority }} readonly</option>
-                        {% else %}
-                        <option value="{{ priority }}">{{ priority }} readonly</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <label>Priority</label>
-            </div>
-        </div>
+            <tr>
+                <td>Project Name</td>
+                <td>{{project.project_name}}</td>
+            </tr>
 
-        <!--    Points assigned    -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-trophy prefix light-blue-text text-darken-4"></i>
-                <select id="project_points" name="project_points" class="validate" readonly>
-                    <option value="" disabled selected>Select Points</option>
-                    {% for point_award in points %}
-                        {% if point_award == project.project_points %}
-                            <option value="{{ point_award}}" selected>{{ point_award }} </option>
-                        {% else %}
-                            <option value="{{ point_award }}">{{ point_award }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <label>Points Awarded</label>
-            </div>
-        </div>
+            <tr>
+                <td>Description</td>
+                <td>{{project.project_description}}</td>
+            </tr>
 
-        <!--    hours required   -->
-        <div class="row">
-            <div class="input-field col s12">
-                <i class="fas fa-clock-o prefix light-blue-text text-darken-4"></i>
-                <select id="project_hour_estimate" name="project_hour_estimate" class="validate" readonly>
-                    <option value="" disabled selected>Estimated hours</option>
-                    {% for hour_estimate in hours %}
-                        {% if hour_estimate == project.project_hour_estimate %}
-                            <option value="{{ hour_estimate }}" selected>{{ hour_estimate }}</option>
-                        {% else %}
-                            <option value="{{ hour_estimate }}">{{ hour_estimate }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <label>Estimated Hours</label>
-            </div>
-        </div>
+            <tr>
+                <td>Category</td>
+                <td>{{project.project_category_name}}</td>
+            </tr>
 
-            <!--    Is Urgent -->
-            <div class="row">
-                <div class="input-field col s12">
-                    <!-- Switch -->
-                    <div class="switch">
-                        <i class="fas fa-exclamation-circle prefix light-blue-text text-darken-4"></i>
-                        <label for="project_is_urgent">
-                            {% if project.project_is_urgent == "on" %}
-                                <input type="checkbox" id="project_is_urgent" name="project_is_urgent" checked readonly>
-                            {% else %}
-                                <input type="checkbox" id="project_is_urgent" name="project_is_urgent" readonly>
-                            {% endif %}
-                            <span class="lever"></span>
-                            Is Urgent
-                        </label>
-                    </div>
-                </div>
-            </div>
+            <tr>
+                <td>Date Created</td>
+                <td>{{project.project_date_created}}</td>
+            </tr>
 
-        <!--    Submit button -->
-        <div class="row">
-            <div class="col s12 center-align">
-                <button type="submit" class="btn-large light-blue darken-1 text-shadow waves-effect waves-light">
-                     close <i class="fas fa-plus-square right"></i>
-                </button>
-            </div>
-        </div>
-    </form>
+            <tr>
+                <td>Created by</td>
+                <td>{{project.project_created_by}}</td>
+            </tr>
+
+            <tr>
+                <td>Due Date</td>
+                <td>{{project.project_due_date}}</td>
+            </tr>
+
+            <tr>
+                <td>Estimated time</td>
+                <td>{{project.project_hour_estimate}}</td>
+            </tr>
+
+            <tr>
+                <td>Status</td>
+                <td>{{project.project_status}}</td>
+            </tr>
+
+            <tr>
+                <td>Priority</td>
+                <td>{{project.project_priority}}</td>
+            </tr>
+
+            <tr>
+                <td>Points</td>
+                <td>{{project.project_points}}</td>
+            </tr>
+
+            <tr>
+                <td>Urgent?</td>
+                <td>{{project.project_is_urgent}}</td>
+            </tr>
+
+            <tr>
+                <td>Date started</td>
+                <td>{{project.project_date_opened}}</td>
+            </tr>
+
+            <tr>
+                <td>Started by</td>
+                <td>{{project.project_opened_by}}</td>
+            </tr>
+
+            <tr>
+                <td>Date completed</td>
+                <td>{{project.project_date_closed}}</td>
+            </tr>
+
+            <tr>
+                <td>Completed by</td>
+                <td>{{project.project_closed_by}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
 </div>
 
 
