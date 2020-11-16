@@ -60,19 +60,19 @@ def get_projects(project_state=""):
         # pass along project counts  Probably a better way to do this
         # via some aggregation or something
         status_counts = {}
-        status_counts["closed"] = mongo.db.projects.find(
+        status_counts["closed"] = mongo.db.projects.count_documents(
                 {"project_status": "closed",
-                    "project_account_name": session["ACCOUNT"]}).count()
+                    "project_account_name": session["ACCOUNT"]})
 
         status_counts["new"] = \
-            mongo.db.projects.find(
+            mongo.db.projects.count_documents(
                                 {"project_status": "new",
                                  "project_account_name":
-                                 session["ACCOUNT"]}).count()
+                                 session["ACCOUNT"]})
 
-        status_counts["open"] = mongo.db.projects.find(
+        status_counts["open"] = mongo.db.projects.count_documents(
                 {"project_status": "open",
-                    "project_account_name": session["ACCOUNT"]}).count()
+                    "project_account_name": session["ACCOUNT"]})
 
         # send totals in as well
         status_counts["total"] = (status_counts["open"] + 
@@ -165,19 +165,19 @@ def project_pop():
             # pass along project counts  Probably a better way to do this
             # via some aggregation or something
             status_counts = {}
-            status_counts["closed"] = mongo.db.projects.find(
+            status_counts["closed"] = mongo.db.projects.count_documents(
                     {"project_status": "closed",
-                        "project_account_name": session["ACCOUNT"]}).count()
+                        "project_account_name": session["ACCOUNT"]})
 
             status_counts["new"] = \
-                mongo.db.projects.find(
+                mongo.db.projects.count_documents(
                                         {"project_status": "new",
                                          "project_account_name":
-                                         session["ACCOUNT"]}).count()
+                                         session["ACCOUNT"]})
 
-            status_counts["open"] = mongo.db.projects.find(
+            status_counts["open"] = mongo.db.projects.count_documents(
                     {"project_status": "open",
-                        "project_account_name": session["ACCOUNT"]}).count()
+                        "project_account_name": session["ACCOUNT"]})
 
             # send totals in as well
             status_counts["total"] = (status_counts["open"] +
@@ -360,23 +360,23 @@ def get_categories():
     for cat in categories:
 
         # Get all of the totals for various categories
-        category_project_count_closed = mongo.db.projects.find(
+        category_project_count_closed = mongo.db.projects.count_documents(
                             {"project_status": "closed",
                              "project_category_name": cat["category_name"],
                              "project_account_name":
-                                session["ACCOUNT"]}).count()
+                                session["ACCOUNT"]})
 
-        category_project_count_open = mongo.db.projects.find(
+        category_project_count_open = mongo.db.projects.count_documents(
                             {"project_status": "open",
                              "project_category_name": cat["category_name"],
                              "project_account_name":
-                                session["ACCOUNT"]}).count()
+                                session["ACCOUNT"]})
 
-        category_project_count_new = mongo.db.projects.find(
+        category_project_count_new = mongo.db.projects.count_documents(
                             {"project_status": "new",
                              "project_category_name": cat["category_name"],
                              "project_account_name":
-                                session["ACCOUNT"]}).count()
+                                session["ACCOUNT"]})
 
         cat["category_project_count_closed"] = category_project_count_closed
         cat["category_project_count_open"] = category_project_count_open
@@ -673,9 +673,9 @@ def user_edit(user_id):
             if session.get("ACTIVE_ADMIN") is not None:
                 # Make sure that the last admin is not turned off.
                 # Get a count and make sure it's at least 1
-                admin_count = mongo.db.users.find(
+                admin_count = mongo.db.users.count_documents(
                     {"user_type": "user", "user_admin": True,
-                     "account_name": session.get("ACCOUNT")}).count()
+                     "account_name": session.get("ACCOUNT")})
 
                 # should never be 0, but just in case
                 if admin_count <= 1 and request.form.get("user_admin") != "on":
@@ -733,9 +733,9 @@ def user_delete(user_id):
             # Make sure that the last admin is not turned off.
             # Get a count and make sure it's at least 1
             # remember that I can't be here unless I'm an admin
-            admin_count = mongo.db.users.find(
+            admin_count = mongo.db.users.count_documents(
                     {"user_type": "user", "user_admin": True,
-                     "account_name": session.get("ACCOUNT")}).count()
+                     "account_name": session.get("ACCOUNT")})
 
             # At this point, we know that I'm deleting myself and
             # I'm the last admin.  Disallow tghis and return to users
