@@ -45,15 +45,15 @@ Wireframes for usability on Desktop
 Note that because this project was focused on database and CRUD I did not do the wireframes for them, 
 and retroactively for the desktop
 
-- [Initial idea](project/Initial_Drawing.png)
-- [Initial Registration](project/Initial_Drawing.png)
-- [Initial Entry](project/Entry_login_Desktop.png)
-- [Registration](project/Register_Desktop.png)
-- [Add a User](project/add_user_desktop.png)
-- [Initial Home - no projects](project/projects_none_Desktop.png)
-- [Adding a project](project/create_project_desktop.png)
-- [Home with projects](project/Home_desktop.png)
-- [Closed view](project/Closed_readonly_view.png)
+![Initial idea](project/Initial_Drawing.png)
+![Initial Registration](project/Initial_Drawing.png)
+![Initial Entry](project/Entry_login_Desktop.png)
+![Registration](project/Register_Desktop.png)
+![Add a User](project/add_user_desktop.png)
+![Initial Home - no projects](project/projects_none_Desktop.png)
+![Adding a project](project/create_project_desktop.png)
+![Home with projects](project/Home_desktop.png)
+![Closed view](project/Closed_readonly_view.png)
 
 
 
@@ -144,7 +144,7 @@ Key to matrix:
 * FFB = Firefox Browser, FFIPH = Firefox iPhone, FFPAD = Firefox iPad			
 * SB = Safari Browser, SIPH = Safari iPhone, SPAD = Safari iPad	
  
-![Testing Matrix](project/magee-ms3-testing_matrix.png)
+![Testing Matrix](project/magee_ms3_testing_matrix.png)
 
 ## Validation
     HTML Verification
