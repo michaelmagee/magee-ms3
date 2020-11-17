@@ -23,19 +23,19 @@ The fundamental use case for this first version is:
   * [User Goals](#User_goals)
   * [User Stories](#User_Stories)
   * [Wireframes](#Wireframes)
- [Features](#features)
+* [Features](#features)
   * [Frontend features](#frontend_features)
   * [Backend features](#backend_features)
-  * [Deferred features](#deferred-features)
+  * [Deferred features](#Deferred_features)
 
-* [User stories](#user-stories)
+* [User stories](#User_Stories)
 * [Technologies used](#Technologies_Used)
 * [Development environment](#Development_environment)
+* [Lessons Learned](#Lessons_learned )
+
 
 * [Testing](#Testing)
 * [Validation](#Validation)
-
-* [Testing and validation](#testing-and-validation)
 
 * [Heroku Deployment](#Heroku_deployment)
 * [Local deployment](#Local_deployment)
@@ -79,8 +79,7 @@ I tried to focus on the database side of it
 
 ## Wireframes
 Wireframes for usability on Desktop 
-Note that because this project was focused on database and CRUD I did not do the wireframes for them, 
-and RETROACTIVELY for the desktop
+Note that because this project was focused on database and CRUD I did not do the wireframes up front.  I worked from limited hand drawings as I learned what Materialize would provide.   These wireframe images are produced RETROACTIVELY and only for the desktop.  I relied on Materialize for the responsiveness. 
 
 ***
 Initial Idea
@@ -140,15 +139,14 @@ Read only view for closed projects
 
 ### Backend_features
 
-* when a recipe category is updated, the application also updates the category name in every recipe in the category
-* when a recipe category is deleted, the application also deletes every recipe in the category
-* limited error handling
-* add and update form validation
+* constant Flask session settings for Account, user and admin status.  This provides the ability for multiple accounts within the database.
+* No visibility to projects, users or categories for different accounts. 
+* Some, but limited error handling
 * updating of selected fields in each collection
 
 ### Deferred_features
 
-* More defensive code to protect from folks bypassing the UI
+* More defensive code to protect from folks augmenting the UI
 * A well thought out approach to editing and renaming users and categories.  I'm very concerned with the simple approach here.
   - I've restricted edits/deletes to admin bit it's too open due to time constraints.  Three approaches come to mind. 
     - Cascading updates for editing and deleting Categories and users
@@ -269,7 +267,7 @@ During HTM validation the following errors surfaced that I could not or (for the
     Described Here: https://devcenter.heroku.com/articles/github-integration
 MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here 
 
-
+## Local_deployment
 This sample site can easily edited, debugged and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
 - From a terminal in the appropriate location clone a copy of the code locally: 
     - run: `git clone https://github.com/michaelmagee/magee-MS3.git`
