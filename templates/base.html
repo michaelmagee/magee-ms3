@@ -64,6 +64,7 @@
             <li><a href="{{ url_for('get_projects') }}">Home</a></li>
             {%if session.ACTIVE_USER %}
             <li><a href="{{ url_for('project_add') }}">New Project</a></li>
+            <li><a href="{{ url_for('project_pop') }}">Pop a Project</a></li>
             <!-- Dropdown Trigger -->
             <li><a class="dropdown-trigger" href="#!" data-target="mobile_system_dropdown">System<i
                         class="sidenav-trigger right fas fa-bars"></i></a></li>
