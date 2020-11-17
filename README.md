@@ -201,7 +201,6 @@ In this section, you should mention all of the languages, frameworks, libraries,
 ### Development_environment 
 - Code Institute student template for Gitpod was used
 - Locally, Visual Studio Code, periodically pushing to Github
-MIKE DESCRIBE
 
 
 ## Testing 
@@ -251,7 +250,7 @@ During HTM validation the following errors surfaced that I could not or (for the
         This came from a Code Institute example of the Materialize selection. 
     - I found no way to get around it. 
 
-## Deployment
+## General_deployment
 There are several environmental parameters that are required for this app to run.  These parameters are set differently for Heroku and a local server running under VSCode.  
 
 In general they are consumed by the app:
@@ -299,7 +298,7 @@ Using the VSCODE environment to run and DBUG takes care of most of the "deployme
 In the terminal window (as part of my .bashrc) I supply the values:
 
 * export MS3_MONGO_URI="mongodb+srv://[USER]:[PASSWORD]@firstcluster.xstpc.mongodb.net/[DBNAME]?retryWrites=true&w=majority"
-* # (LOCAL Mongo) export MS3_MONGO_URI='mongodb://localhost:27017/?readPreference=primary&ssl=falseexport MS3_MONGO_DBN="MS3_HONEYDO"'
+* (LOCAL Mongo) export MS3_MONGO_URI='mongodb://localhost:27017/?readPreference=primary&ssl=falseexport MS3_MONGO_DBN="MS3_HONEYDO"'
 * export MS3_ENVIRONMENT="vscode"
 * export MS3_SECRET_KEY="[SECRETKEY]"
 
