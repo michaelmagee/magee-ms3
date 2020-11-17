@@ -1,21 +1,5 @@
 # Mike Magee - Code Institute Milestone 3  Honey-Do app 
 
-Mike: Discuss: 
-
-
-    HTML Verification
-    Section lacks heading. Consider using “h2”-“h6” elements to add identifying headings to all sections.
-    Attribute “method” not allowed on element “div” at this point.
-        From line 41, column 13 to line 41, column 69
-        Code Extract:
-        <div class="input-field col s12" method="POST" action="">↩
-    The “select” element cannot have more than one selected “option” descendant unless the “multiple” attribute is specified.
-        From line 99, column 21 to line 99, column 50
-        Code Extract:
-        <option value="Home" selected>Home<
-        Came from a Code Institute example 
-
-
 
 The requirement of this project is to "... build a full-stack site that allows your users to manage a common dataset about a particular domain."
 
@@ -136,15 +120,22 @@ In this section, you should mention all of the languages, frameworks, libraries,
 
 ** MJM Confirm current browser versions 
 There should be no visible difference in behavior between browsers.  I have tested with:  
-- Chrome Version 81.0.4044.122
+- Chrome Version 86.0.4240.198 
 - Firefox Version 75.0 (64-bit)
-- Safari Version 13.0.5 (15608.5.11)
+- Safari Version  13.1.2 (15609.3.5.1.3)
 
 All tests described below have worked successfully across all browsers.
 Responsiveness checks have been run by using the Chrome developers's tools as well as manually resizing the windows  
 
 
 ** MJM Outline testing results and observations here 
+In general everything "worked".  I did however feel the need to set the tests in orange for some test below.
+
+In terms of responsiveness,
+    - Firefox had an odd behavior with field validation showing red when it should have been green. 
+    - The action buttons on the project summary just looked bad on the iPhone.  I could not get around that.
+    - Axross all browsers, the first and last entries in the dropdowns  were VREY finicky.  
+      You had to select them JUST right to avoid triggering whatever was behind them.
 
 -- 
 
@@ -152,21 +143,72 @@ Key to matrix:
 * CB = Chrome Browser, CIPH = Chrome iPhone, CPAD = Chrome iPad			
 * FFB = Firefox Browser, FFIPH = Firefox iPhone, FFPAD = Firefox iPad			
 * SB = Safari Browser, SIPH = Safari iPhone, SPAD = Safari iPad	
+| Page              | Feature                                           | CB | CIPH | CPAD | FFB | FFIPH | FFPAD | SB | SIPH | SPAD | Notes                                  |
+|-------------------|---------------------------------------------------|----|------|------|-----|-------|-------|----|------|------|----------------------------------------|
+| Registration      | new registration OK                               | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | user is tester c/f/s                   |
+|                   | first user ok                                     | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | first user admin                                  | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Logout            | User Logged out                                   | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | Session values cleared as expected                | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Login             | Creds accepted or rejected as expected            | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | Session value set correctly                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
+|                   | Set user required                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Users             | display users as expected                         | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | See note in README regarding Cats      |
+|                   | only admins see User - Edit delete                | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| User - Add        | Mix of admin / non admin ok                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| User  - Delete    | Delete works as expected                          | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | FIXED                                  |
+|                   | Self deletion returns to select                   | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | Last admin can't be deleted                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| User - select     | Changing to admin / non admin works ok            | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| User - Edit       | Updates work as expected admin toggle OK          | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | current user changing name updates in session     | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Categories        | display as expected non admins not see editdelete | ✅  | 🆇   | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | pc cats hard to select from system     |
+| Category - Add    | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | See note in README regarding Cats      |
+| Category - Delete | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| Category - Edit   | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| Categories        | Shows correct project counts                      |    |      |      |     |       |       |    |      |      |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Projects          | Display as expected,counts accurate, clickable    | ✅  | 🆇   | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | pc weird buttons                       |
+| Project- Add      | Required fields prompt as expected,               | ✅  | ✅    | ✅    | 🆇  | ✅     | 🆇    | ✅  | ✅    | ✅    | ffox Field errors weird ipad           |
+|                   | Dropdowns, date picker and urgent slider OK       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+| Project- Close    | Moves project to closed state, visible in view    | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| Project- Edit     | All fields editable and OK                        | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | NO ffox Field errors                   |
+| Project Pop       | All selection works as updated                    | ✅  | 🆇   | ✅    | ✅   | ✅     | 🆇    | ✅  | ✅    | ✅    | ffox Field errors weird, drops finicky |
+|                   | Results presentation OK                           | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   | Start / edit / close directed correctly           | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+| Project- View     | Shows read only version of all fields             | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
+|                   | Responsiveness                                    | ✅  | 🆇   | ✅    | ✅   | 🆇    | ✅     | ✅  | 🆇   | ✅    |                                        |
 
-** MJM Include completed testing matrix here 
 
 ## Validation
     HTML Verification
+During HTM validation the following errors surfaced that I could not or (for the h2=h6) didn't feel was necessary to address
+
     Section lacks heading. Consider using “h2”-“h6” elements to add identifying headings to all sections.
+     - I assume this is OK for what we are doing here
+    
     Attribute “method” not allowed on element “div” at this point.
         From line 41, column 13 to line 41, column 69
         Code Extract:
         <div class="input-field col s12" method="POST" action="">↩
+    - I found no way to get around it. 
+    
     The “select” element cannot have more than one selected “option” descendant unless the “multiple” attribute is specified.
         From line 99, column 21 to line 99, column 50
         Code Extract:
         <option value="Home" selected>Home<
-        Came from a Code Institute example 
+        This came from a Code Institute example of the Materialize selection. 
+    - I found no way to get around it. 
 
 ## Deployment
 
