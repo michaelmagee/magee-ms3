@@ -266,12 +266,18 @@ Their names and content are:
 
 * MS3_ENVIRONMENT - used to control the app.run format and parameters specific to Heroku vs vscode
 * MS3_MONGO_DBN - Mongo DBNAME
-* MS3_MONGO_URI - Mongo Connection string
+* MS3_MONGO_URI - Mongo Connection string  ()
 * IP - Mongo IP
 * PORT - Mongo Port 
 * SECRET_KEY - Unique key required to use Flask Sessions
 
 ( as mentioned, this project is at https://github.com/michaelmagee/magee-ms3)
+
+For convenience you can generate the SECRET_KEY at: https://randomkeygen.com/
+The MS3_MONGO_URI will look something like:
+ * mongodb+srv://[USER]:[PASWORD]@firstcluster.xstpc.mongodb.net/[DATABASENAME]?retryWrites=true&w=majority
+
+This information is available From Atlas. 
 
 ## Heroku_deployment
 Instead of using the Heroku Git, the better way is to have a traditional github to push to and have an automatic deployment of the app to Heroku.  This is described in great detail here: https://devcenter.heroku.com/articles/github-integration
@@ -284,11 +290,20 @@ Overview:
 Before running, you need to configure the application configuration variables in the settings tab. after "Revealing Config vars" you will need to supply them. 
 
 It will look like this: 
-Initial Registration
-![Registration](project/HerokuSettings.png)
+Heroku App Settings
+![Heroku App Settings](project/HerokuSettings.png)
 
 *** 
-## Local_deployment
+## Local_deployment 
+Using the VSCODE environment to run and DBUG takes care of most of the "deployment", but the environmental parameters need to be defined.
+In the terminal window (as part of my .bashrc) I supply the values:
+
+* export MS3_MONGO_URI="mongodb+srv://[USER]:[PASSWORD]@firstcluster.xstpc.mongodb.net/[DBNAME]?retryWrites=true&w=majority"
+* # (LOCAL Mongo) export MS3_MONGO_URI='mongodb://localhost:27017/?readPreference=primary&ssl=falseexport MS3_MONGO_DBN="MS3_HONEYDO"'
+* export MS3_ENVIRONMENT="vscode"
+* export MS3_SECRET_KEY="[SECRETKEY]"
+
+
 This sample site can easily edited, debugged and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
 - From a terminal in the appropriate location clone a copy of the code locally: 
     - run: `git clone https://github.com/michaelmagee/magee-MS3.git`
