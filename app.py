@@ -210,7 +210,7 @@ def project_pop():
                                    status_type="popped")
 
     # else it's a get - render the page
-    return render_template("pop_a_project.html", pops=POPS,
+    return render_template("project_pop.html", pops=POPS,
                            sort_types=SORT_TYPES,
                            sort_fields=SORT_FIELDS)
 

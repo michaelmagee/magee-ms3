@@ -2,6 +2,7 @@
 {% block content %}
 
 <h3 class="light-blue-text text-darken-4 center-align">Pop a Project for me</h3>
+<h4 class="light-blue-text text-darken-4 center-align">Help find a project to open based on Time, Priority or Points</h4>
 <div class="row card-panel grey lighten-5">
     <form class="col s12" method="POST" action="{{ url_for('project_pop') }}">
         <!-- Number of pops selected -->
@@ -14,7 +15,7 @@
                     <option value="{{ pop }}">{{ pop }}</option>
                     {% endfor %}
                 </select>
-                <label>Number I want</label>
+                <label>Number I want to pick from</label>
             </div>
         </div>
 
@@ -28,7 +29,7 @@
                     <option value="{{sort_field.field_name}}">{{sort_field.display_name}}</option>
                     {% endfor %}
                 </select>
-                <label>Sort Field</label>
+                <label>Search Field</label>
             </div>
         </div>
 
@@ -42,7 +43,7 @@
                     <option value="{{sort_type.sort_type}}">{{sort_type.display_name}}</option>
                     {% endfor %}
                 </select>
-                <label>Number I want</label>
+                <label>Ascending or Descending</label>
             </div>
         </div>
 
