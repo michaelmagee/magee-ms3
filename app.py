@@ -1,5 +1,6 @@
 #
 # Mike Magee  Milestone 3 for Code Institute
+# Final 11/17/2020
 #
 
 import os
@@ -663,8 +664,15 @@ NOTE:   Concern here is that editing a user associated
 # user Edit here
 @app.route("/user_edit/<user_id>", methods=["GET", "POST"])
 def user_edit(user_id):
+    update_active_user = False
     if request.method == "POST":
         try:
+            # get the user_name being updated here
+            # see if the user_name has changed
+            u = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+            if u["user_name"] != request.form.get("user_name"):
+                update_active_user = True
+
             # If this is an admin, respect the admin switch, else no
             user_admin = False
             if request.form.get("user_admin") == "on":
@@ -695,7 +703,7 @@ def user_edit(user_id):
                 # FINALLY, if user is active and removed their own admin priv,
                 # remove the fact that they are an admin by popping it off
                 # the session Note user/active user set this way to make PEP8
-                # happy.
+                # happy.  Also update the ACTIVE_USER NAME is changed
                 user = request.form.get("user_name")
                 active_user = session.get("ACTIVE_USER")
                 if (user == active_user and user_admin is False):
@@ -710,6 +718,11 @@ def user_edit(user_id):
         except:
             flash("Error accessing the database.  Please retry")
             return render_template("projects.html")
+
+        # if the username has changed for the active user, set the active user
+        if update_active_user is True:
+            session.pop("ACTIVE_USER")  # not sure I need this, just in case
+            session["ACTIVE_USER"] = request.form.get("user_name")
 
         return redirect(url_for("get_users"))
 
@@ -743,6 +756,13 @@ def user_delete(user_id):
                 flash("Unable to remove the only known admin. \
                         Please create another one first.")
             return redirect(url_for("get_users"))
+
+    except:
+            flash("Error accessing the database.  Please retry")
+            return render_template("projects.html")
+
+    try:
+        mongo.db.users.remove({"_id": ObjectId(user_id)})
 
     except:
             flash("Error accessing the database.  Please retry")
@@ -860,7 +880,7 @@ def user_add():
         if users_exist == 0:
             session["ACTIVE_USER"] = request.form.get("user_name").lower()
 
-        return redirect(url_for("get_projects"))
+        return redirect(url_for("get_users"))
 
     return render_template("user_add.html")
 
@@ -883,6 +903,3 @@ elif environment == "heroku":
         app.run(host=os.environ.get("IP", "0.0.0.0"),
                 port=int(os.environ.get("PORT", "5000")),
                 debug=False)
-
-else:
-    print(" Unknown environment")
