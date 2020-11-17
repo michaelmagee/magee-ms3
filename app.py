@@ -755,7 +755,7 @@ def user_delete(user_id):
             if admin_count <= 1:
                 flash("Unable to remove the only known admin. \
                         Please create another one first.")
-            return redirect(url_for("get_users"))
+                return redirect(url_for("get_users"))
 
     except:
             flash("Error accessing the database.  Please retry")
