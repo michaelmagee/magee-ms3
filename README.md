@@ -33,9 +33,10 @@ The fundamental use case for this first version is:
 * [Development environment](#Development_environment)
 * [Lessons Learned](#Lessons_learned )
 
+* [General Deployment](#General_deployment)
+  * [Testing](#Testing)
+  * [Validation](#Validation)
 
-* [Testing](#Testing)
-* [Validation](#Validation)
 
 * [Heroku Deployment](#Heroku_deployment)
 * [Local deployment](#Local_deployment)
@@ -50,7 +51,7 @@ The fundamental use case for this first version is:
 
 ## Hosted_app
 The App is published at https://magee-ms3.herokuapp.com
-
+The source code is located at: https://github.com/michaelmagee/magee-ms3
 <br>
 
 ## UX 
@@ -251,22 +252,42 @@ During HTM validation the following errors surfaced that I could not or (for the
     - I found no way to get around it. 
 
 ## Deployment
+There are several environmental parameters that are required for this app to run.  These parameters are set differently for Heroku and a local server running under VSCode.  
+
+In general they are consumed by the app:
+```
+environment = os.getenv("MS3_ENVIRONMENT")
+
+app.config["MONGO_URI"] = os.getenv("MS3_MONGO_URI")
+app.config["MONGO_DBNAME"] = os.getenv("MS3_MONGO_DBN")
+app.secret_key = os.getenv("MS3_SECRET_KEY")
+```
+Their names and content are: 
+
+* MS3_ENVIRONMENT - used to control the app.run format and parameters specific to Heroku vs vscode
+* MS3_MONGO_DBN - Mongo DBNAME
+* MS3_MONGO_URI - Mongo Connection string
+* IP - Mongo IP
+* PORT - Mongo Port 
+* SECRET_KEY - Unique key required to use Flask Sessions
+
+( as mentioned, this project is at https://github.com/michaelmagee/magee-ms3)
+
 ## Heroku_deployment
+Instead of using the Heroku Git, the better way is to have a traditional github to push to and have an automatic deployment of the app to Heroku.  This is described in great detail here: https://devcenter.heroku.com/articles/github-integration
 
-** MIKE Describe environment variables required to run
-    - MS3_ENVIRONMENT
-    - MS3_MONGO_DBN
-    - MS3_MONGO_URI
-    - IP 
-    - PORT 
-    - SECRET_KEY 
+Overview: 
+* Use the App deploy tab to tell Heroku to connect to your repository on github.
+* You will use your Github creds to authenticate Only the first time
+* You enable Automatic deploys, and Heroku will build and deploy when there is an update to your Github Repro
 
-## Heroku_deployment
+Before running, you need to configure the application configuration variables in the settings tab. after "Revealing Config vars" you will need to supply them. 
 
-### Github to Heroku integration
-    Described Here: https://devcenter.heroku.com/articles/github-integration
-MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here 
+It will look like this: 
+Initial Registration
+![Registration](project/HerokuSettings.png)
 
+*** 
 ## Local_deployment
 This sample site can easily edited, debugged and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
 - From a terminal in the appropriate location clone a copy of the code locally: 
@@ -291,7 +312,7 @@ Another blue button should appear to click: *Open Browser*.
 - Attempted color inspiration from color.adobe.com
 - Secret Key generation from: https://randomkeygen.com/  as suggested by CI
 - Using BCRYPT for hashing by Brian my mentor. 
-- Excellent examples provided by Code Institute for the Task Manager.
+- Excellent examples provided by Code Institute for the Task Manager.  I leveraged the things I learned in the mini_project but extended them significantly.  I was going to change the colors and have my wife pick them but she like the Code Institute ones better.  
 
 ### Media & Content
 -  Icons by - https://fontawesome.com/
