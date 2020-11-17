@@ -34,8 +34,8 @@ The fundamental use case for this first version is:
 * As a user I want to be able to have the App "Pop" a project off based on criteria.
 
 <br> 
-** MJM UPDATE FINAL IMAGE
-![UI-image](project/magee-ms3-overview.png "UI Image")
+
+![Home page](project/magee-ms3-overview.png)
 
 *** 
 Hosted app
@@ -143,52 +143,8 @@ Key to matrix:
 * CB = Chrome Browser, CIPH = Chrome iPhone, CPAD = Chrome iPad			
 * FFB = Firefox Browser, FFIPH = Firefox iPhone, FFPAD = Firefox iPad			
 * SB = Safari Browser, SIPH = Safari iPhone, SPAD = Safari iPad	
-| Page              | Feature                                           | CB | CIPH | CPAD | FFB | FFIPH | FFPAD | SB | SIPH | SPAD | Notes                                  |
-|-------------------|---------------------------------------------------|----|------|------|-----|-------|-------|----|------|------|----------------------------------------|
-| Registration      | new registration OK                               | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | user is tester c/f/s                   |
-|                   | first user ok                                     | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | first user admin                                  | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Logout            | User Logged out                                   | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | Session values cleared as expected                | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Login             | Creds accepted or rejected as expected            | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | Session value set correctly                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
-|                   | Set user required                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Users             | display users as expected                         | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | See note in README regarding Cats      |
-|                   | only admins see User - Edit delete                | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| User - Add        | Mix of admin / non admin ok                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| User  - Delete    | Delete works as expected                          | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | FIXED                                  |
-|                   | Self deletion returns to select                   | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | Last admin can't be deleted                       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| User - select     | Changing to admin / non admin works ok            | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| User - Edit       | Updates work as expected admin toggle OK          | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | current user changing name updates in session     | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | confirm locally in debug               |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Categories        | display as expected non admins not see editdelete | ✅  | 🆇   | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | pc cats hard to select from system     |
-| Category - Add    | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | See note in README regarding Cats      |
-| Category - Delete | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| Category - Edit   | Works as expected                                 | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| Categories        | Shows correct project counts                      |    |      |      |     |       |       |    |      |      |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Projects          | Display as expected,counts accurate, clickable    | ✅  | 🆇   | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | pc weird buttons                       |
-| Project- Add      | Required fields prompt as expected,               | ✅  | ✅    | ✅    | 🆇  | ✅     | 🆇    | ✅  | ✅    | ✅    | ffox Field errors weird ipad           |
-|                   | Dropdowns, date picker and urgent slider OK       | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-| Project- Close    | Moves project to closed state, visible in view    | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| Project- Edit     | All fields editable and OK                        | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    | NO ffox Field errors                   |
-| Project Pop       | All selection works as updated                    | ✅  | 🆇   | ✅    | ✅   | ✅     | 🆇    | ✅  | ✅    | ✅    | ffox Field errors weird, drops finicky |
-|                   | Results presentation OK                           | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   | Start / edit / close directed correctly           | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-| Project- View     | Shows read only version of all fields             | ✅  | ✅    | ✅    | ✅   | ✅     | ✅     | ✅  | ✅    | ✅    |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-|                   |                                                   |    |      |      |     |       |       |    |      |      |                                        |
-|                   | Responsiveness                                    | ✅  | 🆇   | ✅    | ✅   | 🆇    | ✅     | ✅  | 🆇   | ✅    |                                        |
-
+ 
+![Testing Matrix](project/magee-ms3-testing_matrix.png)
 
 ## Validation
     HTML Verification
@@ -247,8 +203,6 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 ## Credits
 - Organizational and planning support from Mentor Brian M.  
 - Attempted color inspiration from color.adobe.com
-- Table of contents generated with markdown-toc: http://ecotrust-canada.github.io/markdown-toc/  
-- Cool Excel to markdown utility by DaveJ: https://thisdavej.com/copy-table-in-excel-and-paste-as-a-markdown-table/
 - Secret Key generation from: https://randomkeygen.com/  as suggested by CI
 - Using BCRYPT for hashing by Brian my mentor. 
 - Excellent examples provided by Code Institute for the Task Manager.
