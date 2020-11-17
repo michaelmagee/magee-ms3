@@ -14,78 +14,160 @@ The fundamental use case for this first version is:
     - Anyone can open, complete and earn the award points. 
     - Categories and users can be added and managed
 
-<br>
 ***
-## UX 
+## Table of contents
 
-### User goals 
+* [Demo App](#Hosted_app)
+* [UX](#ux)
+* [User Design](#user)
+  * [User Goals](#User_goals)
+  * [User Stories](#User_Stories)
+  * [Wireframes](#Wireframes)
+ [Features](#features)
+  * [Frontend features](#frontend_features)
+  * [Backend features](#backend_features)
+  * [Deferred features](#deferred-features)
+
+* [User stories](#user-stories)
+* [Technologies used](#Technologies_Used)
+* [Development environment](#Development_environment)
+
+* [Testing](#Testing)
+* [Validation](#Validation)
+
+* [Testing and validation](#testing-and-validation)
+
+* [Heroku Deployment](#Heroku_deployment)
+* [Local deployment](#Local_deployment)
+
+* [Credits](#credits)
+  * [Content](#content)
+  * [Acknowledgements](#acknowledgements)
+
+
+
+
+
+## Hosted_app
+The App is published at https://magee-ms3.herokuapp.com
+
+<br>
+
+## UX 
+***
+The majority of responsiveness is supplied by Materialize.  
+I tried to focus on the database side of it
+
+## User 
+### User_goals 
 * An app that is simple to approach and use. 
 * Controls and interactions that are familiar and predictable.
 * Responsive across device types.
 * Somewhat fun. 
+* Useful for managing family projects among members
 
-### User Stories 
+### User_Stories 
 * As a user I expect the app to be usable without instruction if possible
 * As a user I expect adding a new project to be simple and fast
 * As a user I expect accessing, opening and closing projects to be simple
 * As a user I expect searching for projects via various criteria to be intuitive
 * As a user I want to be able to observe how many projects are in what state. 
-* As a user I want to be know how many projects are in each category 
-* As a user I want to be able to have the App "Pop" a project off based on criteria.
+* As a user I want to be know how many projects are in each category
+* As a user I want to award points for projects  and collect points for completing projects 
+* As a user I want to be able to have the App "Pop" a project off based on criteria.  I use the term "Pop" to provide a way to get a single or short list of projects based on a selected criteria (priority, points or duration).  For those folks that want to be surprised at which project is next.
 
-<br> 
 
-![Home page](project/magee-ms3-overview.png)
-
-*** 
-Hosted app
-The App is published at https://magee-ms3.herokuapp.com
-***
+## Wireframes
 Wireframes for usability on Desktop 
 Note that because this project was focused on database and CRUD I did not do the wireframes for them, 
-and retroactively for the desktop
+and RETROACTIVELY for the desktop
 
-![Initial idea](project/Initial_Drawing.png)
-![Initial Registration](project/Initial_Drawing.png)
-![Initial Entry](project/Entry_login_Desktop.png)
-![Registration](project/Register_Desktop.png)
-![Add a User](project/add_user_desktop.png)
-![Initial Home - no projects](project/projects_none_Desktop.png)
-![Adding a project](project/create_project_desktop.png)
-![Home with projects](project/Home_desktop.png)
-![Closed view](project/Closed_readonly_view.png)
-
-
-
-
-## MINIMUM Features (Must Have) 
-- **Simple Interface**: Must have a simple interface free of distraction and complexity 
-- **Next Feature**: 
-
-<br> <br> 
 ***
+Initial Idea
+![Initial idea](project/Initial_Drawing.png)
 
-## STRETCH Features (Nice to have) 
-- **tbd**: 
+***
+Application Entry Point
+![Initial Entry](project/Entry_login_Desktop.png)
+
+***
+Initial Registration
+![Registration](project/Register_Desktop.png)
+
+***
+Adding a User
+![Add a User](project/add_user_desktop.png)
+
+***
+Homepage with no projects yet
+![Initial Home - no projects](project/projects_none_Desktop.png)
+
+***
+Project Creation
+![Adding a project](project/create_project_desktop.png)
+
+***
+Basic desktop
+![Home with projects](project/Home_desktop.png)
+
+***
+Read only view for closed projects
+![Closed view](project/project_pop_form.png)
+
+***
+Project Pop Results
+![Closed view](project/results.png)
+
+***
+Read only view for closed projects
+![Closed view](project/project_pop_form.png)
 
 
+
+## Features
+
+### Frontend_features
+
+* a simple application that needs almost no instruction 
+* an "account" with name and password.  
+* multiple users (mom, dad, cat, etc.) that create and complete projects 
+* ability to "Pop" the next project you will start based on some limited search criteria
+* add, update and delete users and project categories
+* seeing counts of projects in various states
+* seeing counts of projects by category
+
+
+
+### Backend_features
+
+* when a recipe category is updated, the application also updates the category name in every recipe in the category
+* when a recipe category is deleted, the application also deletes every recipe in the category
+* limited error handling
+* add and update form validation
+* updating of selected fields in each collection
+
+### Deferred_features
+
+* More defensive code to protect from folks bypassing the UI
+* A well thought out approach to editing and renaming users and categories.  I'm very concerned with the simple approach here.
+  - I've restricted edits/deletes to admin bit it's too open due to time constraints.  Three approaches come to mind. 
+    - Cascading updates for editing and deleting Categories and users
+    - Restricting editing or deleting Categories and users that have active projects
+    - Complex embedding of category and user id's (like a foreign key in RDBMS).  Yuk 
+* MUCH stronger error handling for MongoDB and Python errors.  
 <br> 
 *** 
-
-## DEFERRED Features (Wish I could, maybe I will) 
-- **Email Notification**: Status email (Open, close etc) to creator
-
-
 
 <br> *** 
 
-## What I learned 
+## Lessons_learned 
 - ** Python coding **: I didn't lint it until the end.  I learned that I should lint before EVERY checkin. 
 - ** Jinja HTML Validation **: A combination of copying the resolved HTML from the browser as well as using the source HTML provided the best results. 
+- There's a lot to Mongo that I don't know. 
 <br> 
 
 ***
-## Technologies Used
+## Technologies_Used
 
 In this section, you should mention all of the languages, frameworks, libraries, and any other tools that you have used to construct this project. For each, provide its name, a link to its official site and a short sentence of why it was used.
 
@@ -99,8 +181,8 @@ In this section, you should mention all of the languages, frameworks, libraries,
     - http://pep8online.com/
 - Development framework Visual Studio Code (mac) by Microsoft v1.50.1
     -https://visualstudio.microsoft.com/vs/mac/
-- Javascript 
-    - https://www.javascript.com/
+- Python 
+    - https://https://www.python.org/
 - Github - Source Code Control 
     - https://https://github.com/
     - Github integration to Heroku: https://devcenter.heroku.com/articles/github-integration
@@ -116,9 +198,14 @@ In this section, you should mention all of the languages, frameworks, libraries,
 - BCRYPT - password hashing 
     - https://pypi.org/project/bcrypt/
 ******
-## Testing 
 
-** MJM Confirm current browser versions 
+### Development_environment 
+- Code Institute student template for Gitpod was used
+- Locally, Visual Studio Code, periodically pushing to Github
+MIKE DESCRIBE
+
+
+## Testing 
 There should be no visible difference in behavior between browsers.  I have tested with:  
 - Chrome Version 86.0.4240.198 
 - Firefox Version 75.0 (64-bit)
@@ -128,13 +215,12 @@ All tests described below have worked successfully across all browsers.
 Responsiveness checks have been run by using the Chrome developers's tools as well as manually resizing the windows  
 
 
-** MJM Outline testing results and observations here 
 In general everything "worked".  I did however feel the need to set the tests in orange for some test below.
 
 In terms of responsiveness,
     - Firefox had an odd behavior with field validation showing red when it should have been green. 
     - The action buttons on the project summary just looked bad on the iPhone.  I could not get around that.
-    - Axross all browsers, the first and last entries in the dropdowns  were VREY finicky.  
+    - Across all browsers, the first and last entries in the dropdowns  were VREY finicky.  
       You had to select them JUST right to avoid triggering whatever was behind them.
 
 -- 
@@ -167,12 +253,9 @@ During HTM validation the following errors surfaced that I could not or (for the
     - I found no way to get around it. 
 
 ## Deployment
+## Heroku_deployment
 
-This sample site is set up to use Heroku as a deployment target.  
-** MJM CONFIRM
-- App location is: https://magee-ms3.herokuapp.com
-
-** MJM Describe environment variables required to run
+** MIKE Describe environment variables required to run
     - MS3_ENVIRONMENT
     - MS3_MONGO_DBN
     - MS3_MONGO_URI
@@ -180,7 +263,14 @@ This sample site is set up to use Heroku as a deployment target.
     - PORT 
     - SECRET_KEY 
 
-This sample site can easily edited and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
+## Heroku_deployment
+
+### Github to Heroku integration
+    Described Here: https://devcenter.heroku.com/articles/github-integration
+MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here 
+
+
+This sample site can easily edited, debugged and run locally in the VSCode IDE by using the GoLive feature, which is how this code was developed.  To do this:
 - From a terminal in the appropriate location clone a copy of the code locally: 
     - run: `git clone https://github.com/michaelmagee/magee-MS3.git`
     - then run `git remote rm origin` to remove the remote references to github.
@@ -196,9 +286,7 @@ A blue button should appear to click: *Make Public*,
 
 Another blue button should appear to click: *Open Browser*.
 
-### Github to Heroku integration
-    Described Here: https://devcenter.heroku.com/articles/github-integration
-MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here 
+
 
 ## Credits
 - Organizational and planning support from Mentor Brian M.  
@@ -207,18 +295,8 @@ MJM DESCRIBE MANUAL AND AUTO GH->HEROKU Integration here
 - Using BCRYPT for hashing by Brian my mentor. 
 - Excellent examples provided by Code Institute for the Task Manager.
 
-
-### Environment 
-- Code Institute student template for Gitpod was used
-- Locally, Visual Studio Code, periodically pushing to Github
-
-
-
 ### Media & Content
 -  Icons by - https://fontawesome.com/
-
-
-
 
 ### Acknowledgements
 
